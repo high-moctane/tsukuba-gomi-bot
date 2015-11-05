@@ -3,4 +3,5 @@
 
 # gem "rails"
 
-gem "twitter"
+gem "twitter", "~> 5.15"
+gem "tweetstream", "~> 2.6"
