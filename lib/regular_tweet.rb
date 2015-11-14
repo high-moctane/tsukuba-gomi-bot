@@ -1,5 +1,5 @@
-require "./Bot"
 require "pp"
+require_relative "./bot/Bot"
 
 include Bot
 
@@ -9,7 +9,7 @@ gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot)
 today = DateTime.now
 
 
-data = YAML.load_file("2015_11.yml")
+data = YAML.load_file("./data/2015_11.yml")
 data.each_value do |hash|
   hash.default = :収集なし
 end

@@ -12,7 +12,7 @@ module Bot
 
     def initialize(app_name)
       # ディレクトリ構造を考え付いたらここを書き換える
-      keys = YAML.load_file("./#{app_name}_config.yml")
+      keys = YAML.load_file("../config/#{app_name}_config.yml")
 
       @twitter = Twitter::REST::Client.new do |config|
         config.consumer_key        = keys[:consumer_key]
