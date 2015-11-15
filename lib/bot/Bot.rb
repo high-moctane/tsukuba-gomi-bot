@@ -5,14 +5,15 @@ require "twitter"
 require "tweetstream"
 require "pp"
 
+
 # Bot module
 module Bot
   class Bot
     attr_reader :twitter, :stream
 
     def initialize(app_name)
-      # ディレクトリ構造を考え付いたらここを書き換える
-      keys = YAML.load_file("../config/#{app_name}_config.yml")
+      dir = File.expand_path("../../config/#{app_name}_config.yml", __FILE__)
+      keys = YAML.load_file(dir)
 
       @twitter = Twitter::REST::Client.new do |config|
         config.consumer_key        = keys[:consumer_key]
