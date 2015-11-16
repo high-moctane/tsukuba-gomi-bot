@@ -1,5 +1,6 @@
 # coding: utf-8
 
+require "date"
 require "yaml"
 require "pp"
 
@@ -10,6 +11,8 @@ module Garbage
   class Garbage
     attr_reader :data, :date
 
+    # Todo:
+    #   この辺はそのうち外部ファイルに置けるようにしたい
     @@dist_name = {
       ja: {
         North: :北地区,
@@ -31,7 +34,7 @@ module Garbage
     #   "燃やせない" とかも多言語にする？
 
     def initialize(date, lang = :ja)
-      @date = date
+      @date = date.to_date
 
       load_data(@date)
       load_data(@date + 7) # 月をまたいだ時に困るから
@@ -89,8 +92,11 @@ end
 
 # デバッグ用
 if $0 == __FILE__
+  require "date"
   # pp a = Garbage::Garbage.new(Date.new(2015, 11, 29))
   a = Garbage::Garbage.new(Date.today)
+  # a = Garbage::Garbage.new(DateTime.now.to_date)
+  pp a
   str = ""
   str << "今日 #{a.day}"
   str << "\n"

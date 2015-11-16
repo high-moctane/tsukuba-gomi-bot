@@ -1,5 +1,6 @@
+require "date"
 require "pp"
-require_relative "./bot/Bot"
+require_relative "./bot/bot"
 require_relative "./garbage/garbage"
 
 include Bot
@@ -11,8 +12,8 @@ Account = $DEBUG ? :shakiin : :tsukuba_gominohi_bot
 
 
 gomi_bot = Bot::Bot.new(Account)
-today    = Date.today
-garb     = Garbage::Garbage.new(today)
+now      = DateTime.now
+garb     = Garbage::Garbage.new(now)
 
 
 message = <<"EOS"
@@ -20,11 +21,8 @@ message = <<"EOS"
 
 明日 #{garb.day(1)}
 
-です(｀･ω･´)
+です(｀･ω･´) #{now.strftime("%H:%M")}
 EOS
 
 
 gomi_bot.post(message)
-
-
-STDERR.puts "" ; puts :done
