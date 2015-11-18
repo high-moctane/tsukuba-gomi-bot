@@ -97,6 +97,7 @@ module Bot
 
     def post(string)
       @twitter.update(string)
+      Bot.log.info("post: #{string}")
     rescue => e
       Bot.log.fatal "#{e.message} (file: #{__FILE__}, line: #{__LINE__})"
       raise
@@ -110,5 +111,23 @@ end
 # debug
 if $0 == __FILE__
   include Bot
-  Bot.log.info "test"
+  a = Bot::Bot.new(:shakiin)
+  a.stream.userstream.track("ぽわ") do |obj|
+    puts "text " + obj.text
+    puts "favorite_count " + obj.favorite_count.to_s
+    puts "filter_level " + obj.filter_level
+    puts "in_reply_to_screen_name " + obj.in_reply_to_screen_name
+    puts "in_reply_to_status_id " + obj.in_reply_to_status_id.to_s
+    puts "in_reply_to_user_id " + obj.in_reply_to_user_id.to_s
+    puts "lang " + obj.lang
+    puts "retweet_count " + obj.retweet_count.to_s
+    puts "source " + obj.source
+    puts "full_text " + obj.full_text
+    puts "uri " + obj.uri
+    puts ""
+
+    # if /ぽわ/ === obj.text
+      a.twitter.favorite(obj)
+    # end
+  end
 end
