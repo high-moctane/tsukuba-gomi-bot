@@ -6,10 +6,10 @@ require_relative "./garbage/garbage"
 include Bot
 include Garbage
 
-
-
 Account = $DEBUG ? :shakiin : :tsukuba_gominohi_bot
 
+
+Bot.log.info("regular_tweet.rb を起動しました")
 
 gomi_bot = Bot::Bot.new(Account)
 now      = DateTime.now
@@ -26,3 +26,6 @@ EOS
 
 
 gomi_bot.post(message)
+
+
+Bot.log.info("regular_tweet.rb を正常終了しました")
