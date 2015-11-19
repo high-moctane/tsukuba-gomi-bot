@@ -9,7 +9,7 @@ Bot.log.info("stream.rb 起動")
 gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot)
 
 gomi_bot.stream.userstream do |tweet|
-  if /^ごみ$/ === tweet.text
+  if /^ごみ$/ === tweet.text && tweet.in_reply_to_status_id == nil
     Bot.log.info("ごみ ツイート発見")
 
     now = DateTime.now
@@ -27,9 +27,12 @@ EOS
     gomi_bot.twitter.favorite(tweet)
 
     if message.size <= 140
-      gomi_bot.post(message)
+      gomi_bot.twitter.update(message, {in_reply_to_status_id: tweet.id})
     else
-      post("140字超えちゃった(´; ω ;｀)")
+      gomi_bot.twitter.update(
+        "@#{tweet.user.screen_name} 140字超えちゃった(´; ω ;｀)",
+        {in_reply_to_status_id: tweet.id}
+      )
       Bot.log.error("140字オーバー")
     end
   end
