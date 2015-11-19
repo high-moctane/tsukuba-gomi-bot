@@ -7,22 +7,22 @@ include Bot
 Bot.log.info("stream.rb 起動")
 
 gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot)
-now = DateTime.now
-garb = Garbage::Garbage.new(now)
 
-puts string = <<"EOS"
+gomi_bot.stream.userstream do |tweet|
+  if /^ごみ$/ === tweet.text
+    Bot.log.info("ごみ ツイート発見")
+
+    now = DateTime.now
+    garb = Garbage::Garbage.new(now)
+
+    message = "@#{tweet.user.screen_name}\n"
+
+    string = <<"EOS"
 今日は #{garb.day}
 明日は #{garb.day(1)}
 です(｀･ω･´) #{now.strftime("%H:%M")}
 EOS
 
-gomi_bot.stream.userstream do |tweet|
-  pp tweet
-  if /^ごみ$/ === tweet.text
-    Bot.log.info("ごみ ツイート発見")
-
-    tweet.user.screen_name
-    message = "@#{tweet.user.screen_name}\n"
     message << string
     gomi_bot.twitter.favorite(tweet)
 
