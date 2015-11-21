@@ -1,8 +1,12 @@
 # bot のグローバルな値を入れておく
 
-:account:         :tsukuba_gominohi_bot
+:account:         :tsukuba_gomi_bot
 :debug_account:   :dev
-:logfile_name:    tsukuba_gomi_bot.log
+:logfile:         tsukuba_gomi_bot.log
+:logfile_debug:   tsukuba_gomi_bot_debug.log
 :log_freq:        "monthly"
 :log_level:       :INFO
 :log_level_debug: :DEBUG
+
+
+
