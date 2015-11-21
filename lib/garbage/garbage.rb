@@ -4,6 +4,13 @@ require "date"
 require "yaml"
 require "pp"
 
+require_relative "../project/project"
+
+include Project
+
+
+
+
 module Garbage
 
   # Garbege クラス
@@ -11,27 +18,6 @@ module Garbage
   class Garbage
     attr_reader :data, :date
 
-    # Todo:
-    #   この辺はそのうち外部ファイルに置けるようにしたい
-    @@dist_name = {
-      ja: {
-        North: :北地区,
-        West:  :西地区,
-        East:  :東地区,
-        South: :南地区,
-      },
-    }
-
-    @@day_name = {
-      ja: %i(日 月 火 水 木 金 土),
-    }
-
-    @@date_format = {
-      ja: :日,
-    }
-
-    # Todo:
-    #   "燃やせない" とかも多言語にする？
 
     def initialize(date, lang = :ja)
       @date = date.to_date
@@ -41,6 +27,7 @@ module Garbage
 
       localize(lang)
     end
+
 
     # yamlからデータを取り込んで返す
     def load_data(date)
@@ -60,46 +47,58 @@ module Garbage
       end
     end
 
+
     # 他言語対応のフリ
-    def localize(lang)
-      @dist_name   = @@dist_name[lang]
-      @day_name    = @@day_name[lang]
-      @date_format = @@date_format[lang]
+    def localize(language)
+      lang = Project.lang[:ja]
+      @dist_name   = lang[:dist_name]
     end
 
-    # 何日後の情報を文字列で出す
-    def day(shift = 0)
+
+    # 1日分の情報を配列にして返す
+    def day(dist: [:North, :West, :East, :South], shift: 0)
+      dist = [dist].flatten
       date = @date + shift
-
-      date_format =
-        "#{date.day}#{@date_format}(#{@day_name[date.wday]})"
-      ans = "#{date_format}\n"
-
-      @data.each_key do |k|
-        ans << "#{@dist_name[k]}: #{@data[k][date]}\n"
+      ans = []
+      dist.each do |k|
+        ans << [@dist_name[k], @data[k][date]]
       end
-
       ans
     end
 
-    # その週の情報を出す
+
+    # 7日分の情報を配列で出す
     # Todo: そのうち書く
-    def week(shift = 0)
+    def week(dist, shift: 0)
+      ans = []
+      date = @date + shift
+
+      (0..6).each do |i|
+        ans << [date + i, @data[dist][date + i]]
+      end
+
+      ans
     end
   end
 end
 
 
+
 # デバッグ用
 if $0 == __FILE__
   require "date"
-  # pp a = Garbage::Garbage.new(Date.new(2015, 11, 29))
+require_relative "../extend_date/extend_date"
+  pp a = Garbage::Garbage.new(Date.new(2015, 11, 29))
   a = Garbage::Garbage.new(Date.today)
-  # a = Garbage::Garbage.new(DateTime.now.to_date)
+  a = Garbage::Garbage.new(DateTime.now.to_date)
   pp a
   str = ""
   str << "今日 #{a.day}"
   str << "\n"
-  str << "明日 #{a.day(1)}"
+  str << "明日 #{a.day(shift: 1)}"
   puts str
+  pp a.week(:East).map { |b| b[0].strftime("%d日") + " #{b[1]}" }
+  puts a.day(dist: :West).map {|i| i.join(": ")}.join("\n")
+  puts a.day.map {|i| i.join(": ")}.join("\n")
+  puts a.week(:East).map {|i| i[0].to_s(:ja) + i[1].to_s }.join("\n")
 end

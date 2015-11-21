@@ -1,0 +1,18 @@
+# 別に多言語対応しなくともあった方がいいような感じするなあ
+:ja:
+    :dist_name:
+        :North: :北地区
+        :West:  :西地区
+        :East:  :東地区
+        :South: :南地区
+    :day_name:
+        - 日
+        - 月
+        - 火
+        - 水
+        - 木
+        - 金
+        - 土
+    :date_format: 'mydate.strftime("%d日(#{@day_name[mydate.wday]})")'
+
+:others:
