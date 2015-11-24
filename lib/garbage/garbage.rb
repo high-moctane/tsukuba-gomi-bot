@@ -23,35 +23,9 @@ module Garbage
       @date = date.to_date
 
       load_data(@date)
-      load_data(@date + 7) # 月をまたいだ時に困るから
+      load_data(@date >> 1) # 月をまたいだ時に困るから
 
       localize(lang)
-    end
-
-
-    # yamlからデータを取り込んで返す
-    def load_data(date)
-      dir = File.expand_path("../../data/calendar", __FILE__)
-      data_tmp = YAML.load_file("#{dir}/#{date.strftime("%Y_%m")}.yml")
-
-      if @data
-        @data.each_key do |k|
-          @data[k].merge!(data_tmp[k])
-        end
-      else
-        @data = data_tmp
-      end
-
-      @data.each_key do |k|
-        @data[k].default = :収集なし
-      end
-    end
-
-
-    # 他言語対応のフリ
-    def localize(language)
-      lang = Project.lang[:ja]
-      @dist_name   = lang[:dist_name]
     end
 
 
@@ -79,6 +53,52 @@ module Garbage
 
       ans
     end
+
+
+    def next_collect(garb, dist = [:North, :West, :East, :South])
+      dist = [dist].flatten
+      ans = []
+
+      dist.each do |k|
+        (0..30).each do |i|
+          if garb == @data[k][date + i]
+            ans << [@dist_name[k], @date + i]
+            break
+          end
+        end
+      end
+
+      ans
+    end
+
+
+    private
+
+    # yamlからデータを取り込んで返す
+    def load_data(date)
+      dir = File.expand_path("../../data/calendar", __FILE__)
+      data_tmp = YAML.load_file("#{dir}/#{date.strftime("%Y_%m")}.yml")
+
+      if @data
+        @data.each_key do |k|
+          @data[k].merge!(data_tmp[k])
+        end
+      else
+        @data = data_tmp
+      end
+
+      @data.each_key do |k|
+        @data[k].default = :収集なし
+      end
+    end
+
+
+    # 他言語対応のフリ
+    def localize(language)
+      lang = Project.lang[:ja]
+      @dist_name   = lang[:dist_name]
+    end
+
   end
 end
 
@@ -87,18 +107,9 @@ end
 # デバッグ用
 if $0 == __FILE__
   require "date"
-require_relative "../extend_date/extend_date"
-  pp a = Garbage::Garbage.new(Date.new(2015, 11, 29))
-  a = Garbage::Garbage.new(Date.today)
-  a = Garbage::Garbage.new(DateTime.now.to_date)
-  pp a
-  str = ""
-  str << "今日 #{a.day}"
-  str << "\n"
-  str << "明日 #{a.day(shift: 1)}"
-  puts str
-  pp a.week(:East).map { |b| b[0].strftime("%d日") + " #{b[1]}" }
-  puts a.day(dist: :West).map {|i| i.join(": ")}.join("\n")
-  puts a.day.map {|i| i.join(": ")}.join("\n")
-  puts a.week(:East).map {|i| i[0].to_s(:ja) + i[1].to_s }.join("\n")
+  require_relative "../extend_date/extend_date"
+  pp obj = Garbage::Garbage.new(Date.today)
+  pp obj.day
+  pp obj.week(:North)
+  pp obj.next_collect(:ペットボトル)
 end
