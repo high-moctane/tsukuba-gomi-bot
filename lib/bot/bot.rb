@@ -39,8 +39,9 @@ module Bot
         obj = @twitter.update(str, {in_reply_to_status_id: id})
         id = obj.id
 
-        Project.log.info("post: #{string.inspect}")
-        warn "post:\nstr"
+        Project.log.info("post: #{str.inspect}")
+        warn "post:"
+        warn str
       end
     rescue => e
       Project.log.error Project.log_message(e)
@@ -87,8 +88,20 @@ module Bot
       # Note: 改行で優先的にきっている
       def format_message(message, id_name: "")
         id_name = "@" + id_name + "\n" unless id_name == ""
-        ans = message.scan(/^\n|.{1,#{140 - id_name.size}}/)
-        ans.map {|str| id_name + str}
+        ans = [""]
+        i = 0
+        message.scan(/^\n|.{1,#{140 - id_name.size}}/)
+        .map { |s| s << "\n" }.each do |str|
+          if (ans[i] + str).size > 140 - id_name.size
+            i += 1
+            ans[i] = ""
+          end
+          ans[i] << str
+        end
+
+
+
+        pp ans.map {|str| id_name + str}
       end
     end
   end
