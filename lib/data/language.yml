@@ -13,6 +13,5 @@
         - 木
         - 金
         - 土
-    :date_format: 'mydate.strftime("%d日(#{@day_name[mydate.wday]})")'
 
 :others:
