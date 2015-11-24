@@ -6,57 +6,51 @@ require "tweetstream"
 require "pp"
 require "logger"
 
+require_relative "../project/project"
+
+include Project
+
 
 
 # Bot module
 module Bot
-  # あたかもなんかのインスタンスのようにつかう
-  def root
-    File.expand_path("../../../", __FILE__)
-  end
-
-  def config
-    YAML.load_file(root + "/lib/config/config.yml")
-  end
-
-  def log
-    level = {
-      FATAL: Logger::FATAL,
-      ERROR: Logger::ERROR,
-      WARN:  Logger::WARN,
-      INFO:  Logger::INFO,
-      DEBUG: Logger::DEBUG,
-    }
-
-    logger = Logger.new(root + "/log/" + config[:logfile_name])
-
-    logger.level =
-      if $DEBUG
-        level[config[:log_level_debug]]
-      else
-        level[config[:log_level]]
-      end
-
-    logger
-  end
-
-
   # twitterアカウント関連のことをする
   class Bot
     attr_reader :twitter, :stream
 
-    def initialize(app_name)
-      dir  = File.expand_path("../../config/#{app_name}_config.yml", __FILE__)
-      keys = YAML.load_file(dir)
+
+    def initialize(app_name, stream: false)
+      keys = YAML.load_file(
+        Project.root + "/lib/config/#{app_name}_keys.yml"
+      )
 
       @twitter = init_twitter(keys)
-      @stream  = init_tweetstream(keys)
+      @stream  = init_tweetstream(keys) if stream
     rescue => e
-      Bot.log.fatal "#{e.message} (file: #{__FILE__}, line: #{__LINE__})"
+      Project.log.fatal Project.log_message(e)
       raise
     else
-      Bot.log.info "Bot のインスタンス生成完了"
+      Project.log.debug "#{app_name} のインスタンス生成完了"
     end
+
+
+    def update(string, id: nil, id_name: "")
+      self.class.format_message(string, id_name: id_name).each do |str|
+        obj = @twitter.update(str, {in_reply_to_status_id: id})
+        id = obj.id
+
+        Project.log.info("post: #{str.inspect}")
+        warn "post:"
+        warn str
+      end
+    rescue => e
+      Project.log.error Project.log_message(e)
+    end
+
+
+
+    private
+
 
     def init_twitter(keys)
       Twitter::REST::Client.new do |config|
@@ -66,9 +60,10 @@ module Bot
         config.access_token_secret = keys[:access_token_secret]
       end
     rescue => e
-      Bot.log.fatal "#{e.message} (file: #{__FILE__}, line: #{__LINE__})"
+      Project.log.fatal Project.log_message(e)
       raise
     end
+
 
     def init_tweetstream(keys)
       TweetStream.configure do |config|
@@ -81,53 +76,50 @@ module Bot
 
       TweetStream::Client.new
     rescue => e
-      Bot.log.fatal "#{e.message} (file: #{__FILE__}, line: #{__LINE__})"
+      Project.log.fatal Project.log_message(e)
       raise
     end
 
 
-    def put_stream
-      @stream.userstream do |status|
-        printf("%s\n\n", status.text)
+
+    # クラスメソッドにはTwitter関連のを入れる
+    class << self
+      # 140以内に適当に分割する
+      # Note: 改行で優先的にきっている
+      def format_message(message, id_name: "")
+        id_name = "@" + id_name + "\n" unless id_name == ""
+        ans = [""]
+        i = 0
+        message.scan(/^\n|.{1,#{140 - id_name.size}}/)
+        .map { |s| s << "\n" }.each do |str|
+          if (ans[i] + str).size > 140 - id_name.size
+            i += 1
+            ans[i] = ""
+          end
+          ans[i] << str
+        end
+
+
+
+        pp ans.map {|str| id_name + str}
       end
-    rescue => e
-      Bot.log.fatal "#{e.message} (file: #{__FILE__}, line: #{__LINE__})"
-      raise
-    end
-
-    def post(string)
-      @twitter.update(string)
-      Bot.log.info("post: #{string}")
-    rescue => e
-      Bot.log.fatal "#{e.message} (file: #{__FILE__}, line: #{__LINE__})"
-      raise
     end
   end
-
 end
 
 
 
 # debug
 if $0 == __FILE__
+  str = <<"EOS"
+これはある精神病院の患者、――第二十三号がだれにでもしゃべる話である。彼はもう三十を越しているであろう。が、一見したところはいかにも若々しい狂人である。彼の半生の経験は、――いや、そんなことはどうでもよい。彼はただじっと両膝りょうひざをかかえ、時々窓の外へ目をやりながら、（鉄格子てつごうしをはめた窓の外には枯れ葉さえ見えない樫かしの木が一本、雪曇りの空に枝を張っていた。）院長のＳ博士や僕を相手に長々とこの話をしゃべりつづけた。もっとも身ぶりはしなかったわけではない。彼はたとえば「驚いた」と言う時には急に顔をのけぞらせたりした。……
+　僕はこういう彼の話をかなり正確に写したつもりである。もしまただれか僕の筆記に飽き足りない人があるとすれば、東京市外××村のＳ精神病院を尋ねてみるがよい。年よりも若い第二十三号はまず丁寧ていねいに頭を下げ、蒲団ふとんのない椅子いすを指さすであろう。それから憂鬱ゆううつな微笑を浮かべ、静かにこの話を繰り返すであろう。最後に、――僕はこの話を終わった時の彼の顔色を覚えている。彼は最後に身を起こすが早いか、たちまち拳骨げんこつをふりまわしながら、だれにでもこう怒鳴どなりつけるであろう。――「出て行け！　この悪党めが！　貴様も莫迦ばかな、嫉妬しっと深い、猥褻わいせつな、ずうずうしい、うぬぼれきった、残酷な、虫のいい動物なんだろう。出ていけ！　この悪党めが！」
+EOS
   include Bot
-  a = Bot::Bot.new(:shakiin)
-  a.stream.userstream.track("ぽわ") do |obj|
-    puts "text " + obj.text
-    puts "favorite_count " + obj.favorite_count.to_s
-    puts "filter_level " + obj.filter_level
-    puts "in_reply_to_screen_name " + obj.in_reply_to_screen_name
-    puts "in_reply_to_status_id " + obj.in_reply_to_status_id.to_s
-    puts "in_reply_to_user_id " + obj.in_reply_to_user_id.to_s
-    puts "lang " + obj.lang
-    puts "retweet_count " + obj.retweet_count.to_s
-    puts "source " + obj.source
-    puts "full_text " + obj.full_text
-    puts "uri " + obj.uri
-    puts ""
-
-    # if /ぽわ/ === obj.text
-      a.twitter.favorite(obj)
-    # end
+  pp a = Bot::Bot.new(:shakiin, stream: true)
+  a.stream.userstream do |o|
+    if /ぽわ/ === o.text
+      a.twitter.favorite(o)
+    end
   end
 end
