@@ -22,8 +22,7 @@ search_reply  = Queue.new
 
 
 
-gomi_bot = Bot::Bot.new(:shakiin, stream: true)
-# gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot, stream: true)
+gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot, stream: true)
 
 my_id = gomi_bot.twitter.user.id
 my_screen_name = gomi_bot.twitter.user.screen_name
@@ -189,7 +188,7 @@ threads << Thread.fork do |data, category, now, garb, category_name, message|
 
     category_name = Project.lang[:ja][:category_name]
 
-    message = "次の#{category_name[category]}の回収日は"
+    message = "次の#{category_name[category]}の回収日は\n"
     message << "#{garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_s(:ja)}" } * "\n"}\n"
     message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
 
