@@ -18,10 +18,12 @@ tweets        = Queue.new
 normal_tweets = Queue.new
 normal_reply  = Queue.new
 dist_reply    = Queue.new
+search_reply  = Queue.new
 
 
 
-gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot, stream: true)
+gomi_bot = Bot::Bot.new(:shakiin, stream: true)
+# gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot, stream: true)
 
 my_id = gomi_bot.twitter.user.id
 my_screen_name = gomi_bot.twitter.user.screen_name
@@ -103,6 +105,20 @@ threads << Thread.fork do |data, text, message|
         dist_reply.push [data, :South]
       when /^(北|北)(地区)*/
         dist_reply.push [data, :North]
+      when /^燃やせる$/
+        search_reply.push [data, :燃やせる]
+      when /^燃やせない$/
+        search_reply.push [data, :燃やせない]
+      when /^ペットボトル$/
+        search_reply.push [data, :ペットボトル]
+      when /^粗大ごみ$/
+        search_reply.push [data, :粗大ごみ]
+      when /びん|スプレー/
+        search_reply.push [data, :びん・スプレー容器]
+      when /かん/
+        search_reply.push [data, :かん]
+      when /古紙|古布/
+        search_reply.push [data, :古紙・古布]
       else
         normal_reply.push(data)
       end
@@ -141,7 +157,7 @@ end
 
 
 # 地区ごとの返事をする
-threads << Thread.fork do |dist, data, now, garb|
+threads << Thread.fork do |dist, data, now, garb, message|
   loop do
     data, dist = dist_reply.pop
     Project.log.info("地区ごとの返事: #{data[:text].inspect}")
@@ -160,6 +176,27 @@ threads << Thread.fork do |dist, data, now, garb|
   end
 end
 
+
+
+# 次のゴミの日の検索結果を返す
+threads << Thread.fork do |data, category, now, garb, category_name, message|
+  loop do
+    data, category = search_reply.pop
+    Project.log.info("地区ごとの返事: #{data[:text].inspect}")
+
+    now  = DateTime.now
+    garb = Garbage::Garbage.new(now)
+
+    category_name = Project.lang[:ja][:category_name]
+
+    message = "次の#{category_name[category]}の回収日は"
+    message << "#{garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_s(:ja)}" } * "\n"}\n"
+    message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
+
+    gomi_bot.twitter.favorite(data[:id])
+    gomi_bot.update(message, id: data[:id], id_name: data[:screen_name])
+  end
+end
 
 
 # これがないとすぐにプログラムが終了する
