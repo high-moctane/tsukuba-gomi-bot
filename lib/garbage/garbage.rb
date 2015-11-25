@@ -4,6 +4,13 @@ require "date"
 require "yaml"
 require "pp"
 
+require_relative "../project/project"
+
+include Project
+
+
+
+
 module Garbage
 
   # Garbege クラス
@@ -11,36 +18,61 @@ module Garbage
   class Garbage
     attr_reader :data, :date
 
-    # Todo:
-    #   この辺はそのうち外部ファイルに置けるようにしたい
-    @@dist_name = {
-      ja: {
-        North: :北地区,
-        West:  :西地区,
-        East:  :東地区,
-        South: :南地区,
-      },
-    }
-
-    @@day_name = {
-      ja: %i(日 月 火 水 木 金 土),
-    }
-
-    @@date_format = {
-      ja: :日,
-    }
-
-    # Todo:
-    #   "燃やせない" とかも多言語にする？
 
     def initialize(date, lang = :ja)
       @date = date.to_date
 
       load_data(@date)
-      load_data(@date + 7) # 月をまたいだ時に困るから
+      load_data(@date >> 1) # 月をまたいだ時に困るから
 
       localize(lang)
     end
+
+
+    # 1日分の情報を配列にして返す
+    def day(dist: [:North, :West, :East, :South], shift: 0)
+      dist = [dist].flatten
+      date = @date + shift
+      ans = []
+      dist.each do |k|
+        ans << [@dist_name[k], @data[k][date]]
+      end
+      ans
+    end
+
+
+    # 7日分の情報を配列で出す
+    # Todo: そのうち書く
+    def week(dist, shift: 0)
+      ans = []
+      date = @date + shift
+
+      (0..6).each do |i|
+        ans << [date + i, @data[dist][date + i]]
+      end
+
+      ans
+    end
+
+
+    def next_collect(garb, dist = [:North, :West, :East, :South])
+      dist = [dist].flatten
+      ans = []
+
+      dist.each do |k|
+        (0..30).each do |i|
+          if garb == @data[k][date + i]
+            ans << [@dist_name[k], @date + i]
+            break
+          end
+        end
+      end
+
+      ans
+    end
+
+
+    private
 
     # yamlからデータを取り込んで返す
     def load_data(date)
@@ -60,46 +92,24 @@ module Garbage
       end
     end
 
+
     # 他言語対応のフリ
-    def localize(lang)
-      @dist_name   = @@dist_name[lang]
-      @day_name    = @@day_name[lang]
-      @date_format = @@date_format[lang]
+    def localize(language)
+      lang = Project.lang[:ja]
+      @dist_name   = lang[:dist_name]
     end
 
-    # 何日後の情報を文字列で出す
-    def day(shift = 0)
-      date = @date + shift
-
-      date_format =
-        "#{date.day}#{@date_format}(#{@day_name[date.wday]})"
-      ans = "#{date_format}\n"
-
-      @data.each_key do |k|
-        ans << "#{@dist_name[k]}: #{@data[k][date]}\n"
-      end
-
-      ans
-    end
-
-    # その週の情報を出す
-    # Todo: そのうち書く
-    def week(shift = 0)
-    end
   end
 end
+
 
 
 # デバッグ用
 if $0 == __FILE__
   require "date"
-  # pp a = Garbage::Garbage.new(Date.new(2015, 11, 29))
-  a = Garbage::Garbage.new(Date.today)
-  # a = Garbage::Garbage.new(DateTime.now.to_date)
-  pp a
-  str = ""
-  str << "今日 #{a.day}"
-  str << "\n"
-  str << "明日 #{a.day(1)}"
-  puts str
+  require_relative "../extend_date/extend_date"
+  pp obj = Garbage::Garbage.new(Date.today)
+  pp obj.day
+  pp obj.week(:North)
+  pp obj.next_collect(:ペットボトル)
 end
