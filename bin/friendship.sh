@@ -7,12 +7,12 @@ cd ${my_path}/../lib
 
 while :
 do
-    bundle exec ruby regular_tweet.rb
+    bundle exec ruby friendship.rb
 
     # 0-20 min sleep
     sleep `expr $RANDOM % 1200`
 
-    # 1h20m sleep
-    sleep 4800
+    # 1h50m sleep
+    sleep 6600
 done
 

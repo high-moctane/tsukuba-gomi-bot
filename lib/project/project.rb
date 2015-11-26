@@ -33,10 +33,10 @@ module Project
     case $DEBUG
     when true
       logger = Logger.new(root + "/log/" + config[:logfile_debug])
-      level[config[:log_level_debug]]
+      logger.level = level[config[:log_level_debug]]
     else
       logger = Logger.new(root + "/log/" + config[:logfile])
-      level[config[:log_level]]
+      logger.level = level[config[:log_level]]
     end
 
     logger
@@ -55,5 +55,5 @@ if $0 == __FILE__
   pp Project.root
   pp Project.lang
   pp Project.config
-  pp Project.log
+  pp Project.log.debug "test"
 end
