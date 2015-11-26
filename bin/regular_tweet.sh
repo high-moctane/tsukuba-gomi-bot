@@ -9,10 +9,10 @@ while :
 do
     bundle exec ruby regular_tweet.rb
 
-    # 0-10 min sleep
-    sleep `expr $RANDOM % 600`
+    # 0-20 min sleep
+    sleep `expr $RANDOM % 1200`
 
-    # 1h30m sleep
-    sleep 9000
+    # 1h20m sleep
+    sleep 4800
 done
 
