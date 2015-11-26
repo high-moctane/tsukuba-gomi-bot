@@ -62,7 +62,7 @@ module Garbage
       dist.each do |k|
         (0..30).each do |i|
           if garb == @data[k][date + i]
-            ans << [@dist_name[k], @date + i]
+            ans << [@dist_name[k], @date + i, i]
             break
           end
         end

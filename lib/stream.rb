@@ -21,8 +21,9 @@ dist_reply    = Queue.new
 search_reply  = Queue.new
 
 
+account = $DEBUG ? :dev : :tsukuba_gominohi_bot
 
-gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot, stream: true)
+gomi_bot = Bot::Bot.new(account, stream: true)
 
 my_id = gomi_bot.twitter.user.id
 my_screen_name = gomi_bot.twitter.user.screen_name
@@ -34,7 +35,6 @@ threads << Thread.fork do
   begin
     gomi_bot.stream.userstream do |tweet|
       tweets.push(tweet)
-      Project.log.debug("ストリーム検知")
     end
   rescue => e
     Project.log.fatal Project.log_message(e)
@@ -49,7 +49,6 @@ end
 threads << Thread.fork do |tweet, data|
   loop do
     tweet = tweets.pop
-    Project.log.debug("振り分け")
 
     data = {
       retweet?:                tweet.retweet?,
@@ -60,6 +59,8 @@ threads << Thread.fork do |tweet, data|
       id:                      tweet.id,
       screen_name:             tweet.user.screen_name,
     }
+
+    Project.log.debug("ストリーム: #{data[:text].inspect}")
 
     # 絶対に処理しないやつ
     next if data[:retweet?]
@@ -96,31 +97,33 @@ threads << Thread.fork do |data, text, message|
     case message[0]
     when /^(ごみ|ゴミ)($|(の(日|ひ)))/
       case message[1]
-      when /^(東|ひがし)(地区)*/
+      when /^(東|ひがし|ヒガシ|higasi|higashi)/i
         dist_reply.push [data, :East]
-      when /^(西|にし)(地区)*/
+      when /^(西|にし|ニシ|nisi|nishi)/i
         dist_reply.push [data, :West]
-      when /^(南|みなみ)(地区)*/
+      when /^(南|みなみ|ミナミ|minami)/i
         dist_reply.push [data, :South]
-      when /^(北|北)(地区)*/
+      when /^(北|きた|kita)/i
         dist_reply.push [data, :North]
-      when /^燃やせる$/
+      when /^(燃|も)(やせ|え)る/
         search_reply.push [data, :燃やせる]
-      when /^燃やせない$/
+      when /^(燃|も)(やせ|え)ない/
         search_reply.push [data, :燃やせない]
-      when /^ペットボトル$/
+      when /^(ペット|ぺっと)/
         search_reply.push [data, :ペットボトル]
-      when /^粗大ごみ$/
+      when /^(粗大|そだい)/
         search_reply.push [data, :粗大ごみ]
-      when /びん|スプレー/
+      when /^(びん|瓶|スプレー)/
         search_reply.push [data, :びん・スプレー容器]
-      when /かん/
+      when /^(かん|缶)/
         search_reply.push [data, :かん]
-      when /古紙|古布/
+      when /紙|布/
         search_reply.push [data, :古紙・古布]
       else
         normal_reply.push(data)
       end
+    when /(起|お)きた|むくり|おはよ/
+      normal_reply.push(data) if DateTime.now.hour < 12
     else
       # 形式通りでないやつ
       normal_reply.push(data) if data[:in_reply_to_screen_name] == my_screen_name
@@ -189,7 +192,7 @@ threads << Thread.fork do |data, category, now, garb, category_name, message|
     category_name = Project.lang[:ja][:category_name]
 
     message = "次の#{category_name[category]}の回収日は\n"
-    message << "#{garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_s(:ja)}" } * "\n"}\n"
+    message << "#{garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_s(:ja)} (#{"%d" % a[2]}日後)" } * "\n"}\n"
     message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
 
     gomi_bot.twitter.favorite(data[:id])
