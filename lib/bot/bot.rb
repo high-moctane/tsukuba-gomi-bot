@@ -48,6 +48,76 @@ module Bot
     end
 
 
+    # TODO: この辺の繰り返しを綺麗にしたい
+    def follower_ids(account = nil)
+      ids = []
+      cursor = -1
+      while cursor != 0 do
+        tmp = @twitter.follower_ids(account, {cursor: cursor})
+        cursor = tmp.attrs[:next_cursor]
+        ids << tmp.attrs[:ids]
+      end
+    rescue => e
+      Project.log.error Project.log_message(e)
+      nil
+    else
+      ids.flatten
+    end
+
+
+    def friend_ids(account = nil)
+      ids = []
+      cursor = -1
+      while cursor != 0 do
+        tmp = @twitter.friend_ids(account, {cursor: cursor})
+        cursor = tmp.attrs[:next_cursor]
+        ids << tmp.attrs[:ids]
+      end
+    rescue => e
+      Project.log.error Project.log_message(e)
+      nil
+    else
+      ids.flatten
+    end
+
+
+    def friendships_outgoing
+      ids = []
+      cursor = -1
+      while cursor != 0 do
+        tmp = @twitter.friendships_outgoing({cursor: cursor})
+        cursor = tmp.attrs[:next_cursor]
+        ids << tmp.attrs[:ids]
+      end
+    rescue => e
+      Project.log.error Project.log_message(e)
+      nil
+    else
+      ids.flatten
+    end
+
+
+    def follow(id)
+      @twitter.follow(id)
+    rescue => e
+      Project.log.error Project.log_message(e)
+      false
+    else
+      Project.log.info "follow: #{id}"
+      true
+    end
+
+
+    def unfollow(id)
+      @twitter.unfollow(id)
+    rescue => e
+      Project.log.error Project.log_message(e)
+      false
+    else
+      Project.log.info "unfollow: #{id}"
+      true
+    end
+
 
     private
 
@@ -98,10 +168,7 @@ module Bot
           end
           ans[i] << str
         end
-
-
-
-        pp ans.map {|str| id_name + str}
+        ans.map {|str| id_name + str}
       end
     end
   end
@@ -111,15 +178,9 @@ end
 
 # debug
 if $0 == __FILE__
-  str = <<"EOS"
-これはある精神病院の患者、――第二十三号がだれにでもしゃべる話である。彼はもう三十を越しているであろう。が、一見したところはいかにも若々しい狂人である。彼の半生の経験は、――いや、そんなことはどうでもよい。彼はただじっと両膝りょうひざをかかえ、時々窓の外へ目をやりながら、（鉄格子てつごうしをはめた窓の外には枯れ葉さえ見えない樫かしの木が一本、雪曇りの空に枝を張っていた。）院長のＳ博士や僕を相手に長々とこの話をしゃべりつづけた。もっとも身ぶりはしなかったわけではない。彼はたとえば「驚いた」と言う時には急に顔をのけぞらせたりした。……
-　僕はこういう彼の話をかなり正確に写したつもりである。もしまただれか僕の筆記に飽き足りない人があるとすれば、東京市外××村のＳ精神病院を尋ねてみるがよい。年よりも若い第二十三号はまず丁寧ていねいに頭を下げ、蒲団ふとんのない椅子いすを指さすであろう。それから憂鬱ゆううつな微笑を浮かべ、静かにこの話を繰り返すであろう。最後に、――僕はこの話を終わった時の彼の顔色を覚えている。彼は最後に身を起こすが早いか、たちまち拳骨げんこつをふりまわしながら、だれにでもこう怒鳴どなりつけるであろう。――「出て行け！　この悪党めが！　貴様も莫迦ばかな、嫉妬しっと深い、猥褻わいせつな、ずうずうしい、うぬぼれきった、残酷な、虫のいい動物なんだろう。出ていけ！　この悪党めが！」
-EOS
   include Bot
-  pp a = Bot::Bot.new(:shakiin, stream: true)
-  a.stream.userstream do |o|
-    if /ぽわ/ === o.text
-      a.twitter.favorite(o)
-    end
-  end
+  bot = Bot::Bot.new(:dev)
+  pp bot.follower_ids
+  pp bot.friend_ids
+  pp bot.friendships_outgoing
 end
