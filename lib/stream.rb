@@ -123,7 +123,7 @@ threads << Thread.fork do |data, text, message|
         normal_reply.push(data)
       end
     when /(起|お)きた|むくり|おはよ/
-      normal_reply.push(data) if DateTime.now.hour < 12
+      normal_reply.push(data) if DateTime.now.hour.between?(4, 10)
     else
       # 形式通りでないやつ
       normal_reply.push(data) if data[:in_reply_to_screen_name] == my_screen_name
