@@ -72,6 +72,18 @@ module Garbage
     end
 
 
+    # 回収があるかどうかを吐き出す
+    def any_collect?(dist: [:North, :West, :East, :South], shift: 0)
+      dist = [dist].flatten
+      date = @date + shift
+      flag = false
+      dist.each do |k|
+        flag = true if @data[k].has_key?(date)
+      end
+      flag
+    end
+
+
     private
 
     # yamlからデータを取り込んで返す
@@ -112,4 +124,5 @@ if $0 == __FILE__
   pp obj.day
   pp obj.week(:North)
   pp obj.next_collect(:ペットボトル)
+  pp obj.any_collect?
 end
