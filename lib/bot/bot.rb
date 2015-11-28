@@ -50,55 +50,18 @@ module Bot
     end
 
 
-    # TODO: この辺の繰り返しを綺麗にしたい
     def follower_ids(account = nil)
-      ids = []
-      cursor = -1
-      while cursor != 0 do
-        tmp = @twitter.follower_ids(account, {cursor: cursor})
-        cursor = tmp.attrs[:next_cursor]
-        ids << tmp.attrs[:ids]
-      end
-    rescue => e
-      @@P.log.error($0) {@@P.log_message(e)}
-      nil
-    else
-      @@P.log.debug($0) { "#{app_name} の follower_ids を取得" }
-      ids.flatten
+      chain_cursor("follower_ids(#{account ? %{"#{account}"} : "nil"}, {cursor: cursor})")
     end
 
 
     def friend_ids(account = nil)
-      ids = []
-      cursor = -1
-      while cursor != 0 do
-        tmp = @twitter.friend_ids(account, {cursor: cursor})
-        cursor = tmp.attrs[:next_cursor]
-        ids << tmp.attrs[:ids]
-      end
-    rescue => e
-      @@P.log.error($0) {@@P.log_message(e)}
-      nil
-    else
-      @@P.log.debug($0) { "#{app_name} の friend_ids を取得" }
-      ids.flatten
+      chain_cursor("friend_ids(#{account ? %{"#{account}"} : "nil"}, {cursor: cursor})")
     end
 
 
     def friendships_outgoing
-      ids = []
-      cursor = -1
-      while cursor != 0 do
-        tmp = @twitter.friendships_outgoing({cursor: cursor})
-        cursor = tmp.attrs[:next_cursor]
-        ids << tmp.attrs[:ids]
-      end
-    rescue => e
-      @@P.log.error($0) {@@P.log_message(e)}
-      nil
-    else
-      @@P.log.debug($0) { "#{app_name} の friendships_outgoing を取得" }
-      ids.flatten
+      chain_cursor("friendships_outgoing({cursor: cursor})")
     end
 
 
@@ -155,6 +118,22 @@ module Bot
       raise
     end
 
+
+    # カーソルで何回もデータをとってこなきゃいけないものに対応している
+    def chain_cursor(method)
+      ids = []
+      cursor = -1
+      while cursor != 0 do
+        tmp = eval "@twitter.#{method}"
+        cursor = tmp.attrs[:next_cursor]
+        ids << tmp.attrs[:ids]
+      end
+    rescue => e
+      @@P.log.error($0) {@@P.log_message(e)}
+      nil
+    else
+      ids.flatten
+    end
 
 
     # クラスメソッドにはTwitter関連のを入れる
