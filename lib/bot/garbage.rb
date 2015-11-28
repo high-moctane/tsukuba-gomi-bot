@@ -27,6 +27,8 @@ module Bot
       load_data(@date >> 1) # 月をまたいだ時に困るから
 
       localize(lang)
+
+      @@P.log.debug($0) { "Garbage のインスタンス生成 (@date = #{@date})" }
     end
 
 
@@ -104,6 +106,9 @@ module Bot
       @data.each_key do |k|
         @data[k].default = :収集なし
       end
+    rescue => e
+    @@P.log.fatal($0) { @@P.log_message(e) }
+      raise
     end
 
 
@@ -113,6 +118,10 @@ module Bot
       @dist_name   = lang[:dist_name]
     end
 
+
+  rescue => e
+    @@P.log.fatal($0) { @@P.log_message(e) }
+    raise
   end
 end
 
@@ -122,7 +131,7 @@ end
 if $0 == __FILE__
   include Bot
   require "date"
-  require_relative "../extend_date/extend_date"
+  require_relative "../extend_date"
   pp obj = Bot::Garbage.new(Date.today)
   pp obj.day
   pp obj.week(:North)

@@ -1,4 +1,3 @@
-
 require "yaml"
 require "twitter"
 require "tweetstream"
@@ -29,10 +28,10 @@ module Bot
       @twitter = init_twitter(keys)
       @stream  = init_tweetstream(keys) if stream
     rescue => e
-      @@P.log.fatal($0) {@@P.log_message(e)}
+      @@P.log.fatal($0) { @@P.log_message(e) }
       raise
     else
-      @@P.log.info($0) {"#{app_name} のインスタンス生成完了"}
+      @@P.log.debug($0) { "#{app_name} のBotインスタンス生成" }
     end
 
 
@@ -42,11 +41,12 @@ module Bot
         id = obj.id
 
         @@P.log.info($0) {"post: #{str.inspect}"}
-        warn "post:"
-        warn str
+        warn "post:\n" + str + "\n"
       end
+      true
     rescue => e
       @@P.log.error($0) {@@P.log_message(e)}
+      false
     end
 
 
@@ -63,6 +63,7 @@ module Bot
       @@P.log.error($0) {@@P.log_message(e)}
       nil
     else
+      @@P.log.debug($0) { "#{app_name} の follower_ids を取得" }
       ids.flatten
     end
 
@@ -79,6 +80,7 @@ module Bot
       @@P.log.error($0) {@@P.log_message(e)}
       nil
     else
+      @@P.log.debug($0) { "#{app_name} の friend_ids を取得" }
       ids.flatten
     end
 
@@ -95,6 +97,7 @@ module Bot
       @@P.log.error($0) {@@P.log_message(e)}
       nil
     else
+      @@P.log.debug($0) { "#{app_name} の friendships_outgoing を取得" }
       ids.flatten
     end
 
@@ -156,6 +159,7 @@ module Bot
 
     # クラスメソッドにはTwitter関連のを入れる
     class << self
+
       # 140以内に適当に分割する
       # Note: 改行で優先的にきっている
       def format_message(message, id_name: "")
@@ -173,6 +177,10 @@ module Bot
         ans.map {|str| id_name + str}
       end
     end
+
+  rescue => e
+    @@P.log.fatal($0) { @@P.log_message(e) }
+    raise
   end
 end
 
@@ -181,5 +189,5 @@ end
 # debug
 if $0 == __FILE__
   include Bot
-  pp obj = Bot::Bot.new(:dev)
+  pp _obj = Bot::Bot.new(:dev)
 end

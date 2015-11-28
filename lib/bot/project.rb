@@ -69,6 +69,6 @@ if $0 == __FILE__
   begin
     raise
   rescue => e
-    pp obj.log.info("project.rb") { obj.log_message(e) }
+    pp obj.log.info($0) { obj.log_message(e) }
   end
 end
