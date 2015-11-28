@@ -1,36 +1,38 @@
-# coding: utf-8
 
 require "yaml"
 require "twitter"
 require "tweetstream"
-require "pp"
 require "logger"
+require "pp"
 
-require_relative "../project/project"
+require_relative "project"
 
-include Project
 
 
 
 # Bot module
 module Bot
+  include Project
+
   # twitterアカウント関連のことをする
   class Bot
+    @@P = Project
+
     attr_reader :twitter, :stream
 
 
     def initialize(app_name, stream: false)
       keys = YAML.load_file(
-        Project.root + "/lib/config/#{app_name}_keys.yml"
+        @@P.root_dir + "config/#{app_name}_keys.yml"
       )
 
       @twitter = init_twitter(keys)
       @stream  = init_tweetstream(keys) if stream
     rescue => e
-      Project.log.fatal Project.log_message(e)
+      @@P.log.fatal($0) {@@P.log_message(e)}
       raise
     else
-      Project.log.debug "#{app_name} のインスタンス生成完了"
+      @@P.log.info($0) {"#{app_name} のインスタンス生成完了"}
     end
 
 
@@ -39,12 +41,12 @@ module Bot
         obj = @twitter.update(str, {in_reply_to_status_id: id})
         id = obj.id
 
-        Project.log.info("post: #{str.inspect}")
+        @@P.log.info($0) {"post: #{str.inspect}"}
         warn "post:"
         warn str
       end
     rescue => e
-      Project.log.error Project.log_message(e)
+      @@P.log.error($0) {@@P.log_message(e)}
     end
 
 
@@ -58,7 +60,7 @@ module Bot
         ids << tmp.attrs[:ids]
       end
     rescue => e
-      Project.log.error Project.log_message(e)
+      @@P.log.error($0) {@@P.log_message(e)}
       nil
     else
       ids.flatten
@@ -74,7 +76,7 @@ module Bot
         ids << tmp.attrs[:ids]
       end
     rescue => e
-      Project.log.error Project.log_message(e)
+      @@P.log.error($0) {@@P.log_message(e)}
       nil
     else
       ids.flatten
@@ -90,7 +92,7 @@ module Bot
         ids << tmp.attrs[:ids]
       end
     rescue => e
-      Project.log.error Project.log_message(e)
+      @@P.log.error($0) {@@P.log_message(e)}
       nil
     else
       ids.flatten
@@ -100,10 +102,10 @@ module Bot
     def follow(id)
       @twitter.follow(id)
     rescue => e
-      Project.log.error Project.log_message(e)
+      @@P.log.error($0) {@@P.log_message(e)}
       false
     else
-      Project.log.info "follow: #{id}"
+      @@P.log.info($0) {"follow: #{id}"}
       true
     end
 
@@ -111,10 +113,10 @@ module Bot
     def unfollow(id)
       @twitter.unfollow(id)
     rescue => e
-      Project.log.error Project.log_message(e)
+      @@P.log.error($0) {@@P.log_message(e)}
       false
     else
-      Project.log.info "unfollow: #{id}"
+      @@P.log.info($0) {"unfollow: #{id}"}
       true
     end
 
@@ -130,7 +132,7 @@ module Bot
         config.access_token_secret = keys[:access_token_secret]
       end
     rescue => e
-      Project.log.fatal Project.log_message(e)
+      @@P.log.fatal($0) {@@P.log_message(e)}
       raise
     end
 
@@ -146,7 +148,7 @@ module Bot
 
       TweetStream::Client.new
     rescue => e
-      Project.log.fatal Project.log_message(e)
+      @@P.log.fatal($0) {@@P.log_message(e)}
       raise
     end
 
@@ -179,8 +181,5 @@ end
 # debug
 if $0 == __FILE__
   include Bot
-  bot = Bot::Bot.new(:dev)
-  pp bot.follower_ids
-  pp bot.friend_ids
-  pp bot.friendships_outgoing
+  pp obj = Bot::Bot.new(:dev)
 end

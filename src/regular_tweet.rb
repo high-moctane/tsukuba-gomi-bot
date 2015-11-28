@@ -1,23 +1,21 @@
 require "date"
 require "pp"
-require_relative "bot/bot"
-require_relative "garbage/garbage"
-require_relative "extend_date/extend_date"
-require_relative "project/project"
+require_relative "../lib/bot"
+require_relative "../lib/extend_date"
 
 include Bot
-include Garbage
-include Project
 
 account = $DEBUG ? :dev : :tsukuba_gominohi_bot
 
+P = Bot::Project
 
-Project.log.info("regular_tweet.rb を起動しました")
+P.log.info($0) {"起動"}
+warn "#{$0} 起動"
 
 
 gomi_bot = Bot::Bot.new(account)
 now      = DateTime.now
-garb     = Garbage::Garbage.new(now)
+garb     = Bot::Garbage.new(now)
 
 
 
@@ -38,4 +36,5 @@ message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
 gomi_bot.update(message)
 
 
-Project.log.info("regular_tweet.rb を正常終了しました")
+P.log.info($0) {"終了"}
+warn "#{$0} 終了"

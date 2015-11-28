@@ -4,18 +4,19 @@ require "date"
 require "yaml"
 require "pp"
 
-require_relative "../project/project"
-
-include Project
+require_relative "project"
 
 
 
 
-module Garbage
+
+module Bot
+  include Project
 
   # Garbege クラス
   #   カレンダーから読み込んだデータをいい感じに取り扱うクラス
   class Garbage
+    @@P = Project
     attr_reader :data, :date
 
 
@@ -89,6 +90,7 @@ module Garbage
     # yamlからデータを取り込んで返す
     def load_data(date)
       dir = File.expand_path("../../data/calendar", __FILE__)
+      dir = @@P.root_dir + "db/calendar"
       data_tmp = YAML.load_file("#{dir}/#{date.strftime("%Y_%m")}.yml")
 
       if @data
@@ -118,9 +120,10 @@ end
 
 # デバッグ用
 if $0 == __FILE__
+  include Bot
   require "date"
   require_relative "../extend_date/extend_date"
-  pp obj = Garbage::Garbage.new(Date.today)
+  pp obj = Bot::Garbage.new(Date.today)
   pp obj.day
   pp obj.week(:North)
   pp obj.next_collect(:ペットボトル)
