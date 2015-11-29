@@ -7,7 +7,7 @@ require_relative "bot/project"
 
 include Bot::Project
 
-P = Bot::Project
+p = Bot::Project
 
 module Extend_Date
   def __strings__
@@ -16,7 +16,7 @@ module Extend_Date
     def to_s(lang = nil)
       case lang
       when :ja
-        "#{self.day}日(#{P.lang[:ja][:day_name][self.wday]})"
+        "#{self.day}日(#{p.lang[:ja][:day_name][self.wday]})"
       when :en
         str =
           case day.to_s.split(//).pop
@@ -25,7 +25,7 @@ module Extend_Date
           when "3" then :rd
           else :th
           end
-        "#{P.lang[:en][:day_name][self.wday]}, #{self.day}#{str}"
+        "#{p.lang[:en][:day_name][self.wday]}, #{self.day}#{str}"
       else
         __to_s__
       end
@@ -41,6 +41,7 @@ class Date
   include Extend_Date
   eval Extend_Date.__strings__
 end
+
 
 
 
