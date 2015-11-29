@@ -1,0 +1,56 @@
+# 別に多言語対応しなくともあった方がいいような感じするなあ
+:ja:
+    :dist_name:
+        :North: :北地区
+        :West:  :西地区
+        :East:  :東地区
+        :South: :南地区
+    :day_name:
+        - 日
+        - 月
+        - 火
+        - 水
+        - 木
+        - 金
+        - 土
+    :category_name:
+        :燃やせるごみ:       :燃やせるごみ
+        :燃やせないごみ:     :燃やせないごみ
+        :びん・スプレー容器: :びん・スプレー容器
+        :粗大ごみ:           :粗大ごみ
+        :ペットボトル:       :ペットボトル
+        :古紙・古布:         :古紙・古布
+        :かん:               :かん
+        :収集なし:           :収集なし
+    :today: :今日
+    :tomorrow: :明日
+    :footer: "です(｀･ω･´)"
+
+:en:
+    :dist_name:
+        :North: :North
+        :West:  :West
+        :East:  :East
+        :South: :South
+    :day_name:
+        - Sun
+        - Mon
+        - Tue
+        - Wed
+        - Thu
+        - Fri
+        - Sat
+    :category_name:
+        :燃やせるごみ:       :"Burnable garbage"
+        :燃やせないごみ:     :"Non-burnable garbage"
+        :びん・スプレー容器: :"Glass bottles and spray cans"
+        :粗大ごみ:           :"Oversized garbage"
+        :ペットボトル:       :"Plastic bottles"
+        :古紙・古布:         :"Used paper and clothes"
+        :かん:               :"Cans"
+        :収集なし:           :"No collection"
+    :today: :Today
+    :tomorrow: :Tomorrow
+    :footer: "(｀･ω･´)"
+
+

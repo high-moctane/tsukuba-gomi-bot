@@ -1,11 +1,12 @@
 require "pp"
-require_relative "project/project"
-require_relative "bot/bot"
+require_relative "../lib/bot"
 
 include Bot
-include Project
 
-Project.log.info("friendship.rb を起動")
+P = Bot::Project
+
+P.log.info($0) {"起動"}
+warn "#{$0}: 起動"
 
 
 gomi_bot = Bot::Bot.new(:tsukuba_gominohi_bot)
@@ -41,3 +42,6 @@ new_unfollow.sample(10).each do |id|
   gomi_bot.unfollow(id)
 end
 
+
+P.log.info($0) {"終了"}
+warn "#{$0}: 終了"

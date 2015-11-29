@@ -1,16 +1,13 @@
 require "pp"
 require "thread"
-require_relative "bot/bot"
-require_relative "garbage/garbage"
-require_relative "project/project"
-require_relative "extend_date/extend_date"
+require_relative "../lib/bot"
+require_relative "../lib/extend_date"
 
 include Bot
-include Project
 
+P = Bot::Project
 
-
-Project.log.info("stream.rb 起動")
+P.log.info($0) {"stream.rb 起動"}
 
 
 threads       = []
@@ -37,7 +34,7 @@ threads << Thread.fork do
       tweets.push(tweet)
     end
   rescue => e
-    Project.log.fatal Project.log_message(e)
+    P.log.fatal($0) {P.log_message(e)}
     raise
     abort
   end
@@ -60,7 +57,7 @@ threads << Thread.fork do |tweet, data|
       screen_name:             tweet.user.screen_name,
     }
 
-    Project.log.debug("ストリーム: #{data[:text].inspect}")
+    P.log.debug($0) {"ストリーム: #{data[:text].inspect}"}
 
     # 絶対に処理しないやつ
     next if data[:retweet?]
@@ -92,7 +89,7 @@ threads << Thread.fork do |data, text, message|
     data = normal_tweets.pop
     text = data[:text]
     message = text.split.delete_if { |item| /\A@/ === item }
-    Project.log.debug("解析: #{data[:text].inspect}")
+    P.log.debug($0) {"解析: #{data[:text].inspect}"}
 
     case message[0]
     when /^(ごみ|ゴミ)($|(の(日|ひ)))/
@@ -137,16 +134,16 @@ end
 threads << Thread.fork do |data, message, now, garb|
   loop do
     data = normal_reply.pop
-    Project.log.info("普通の返事: #{data[:text].inspect}")
+    P.log.info($0) {"普通の返事: #{data[:text].inspect}"}
 
     now  = DateTime.now
-    garb = Garbage::Garbage.new(now)
+    garb = Bot::Garbage.new(now)
 
     if now.hour < 12
-      message = "今日 #{now.to_s(:ja)}\n"
+      message = "今日 #{now.to_lang(:ja)}\n"
       message << "#{garb.day.map { |a| a.join(": ") }.join("\n")}\n"
     else
-      message = "明日 #{(now + 1).to_s(:ja)}\n"
+      message = "明日 #{(now + 1).to_lang(:ja)}\n"
       message << "#{garb.day(shift: 1).map { |a| a.join(": ") }.join("\n")}\n"
     end
     message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
@@ -162,15 +159,15 @@ end
 threads << Thread.fork do |dist, data, now, garb, message|
   loop do
     data, dist = dist_reply.pop
-    Project.log.info("地区ごとの返事: #{data[:text].inspect}")
+    P.log.info($0) {"地区ごとの返事: #{data[:text].inspect}"}
 
     now  = DateTime.now
-    garb = Garbage::Garbage.new(now)
+    garb = Bot::Garbage.new(now)
 
-    message = "#{Project.lang[:ja][:dist_name][dist]}"
+    message = "#{P.lang[:ja][:dist_name][dist]}"
     message << "のごみは\n今日 "
 
-    message << "#{garb.week(dist).map { |a| "#{a[0].to_s(:ja)}: #{a[1]}" }.join("\n")}\n"
+    message << "#{garb.week(dist).map { |a| "#{a[0].to_lang(:ja)}: #{a[1]}" }.join("\n")}\n"
     message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
 
     gomi_bot.twitter.favorite(data[:id])
@@ -184,15 +181,15 @@ end
 threads << Thread.fork do |data, category, now, garb, category_name, message|
   loop do
     data, category = search_reply.pop
-    Project.log.info("地区ごとの返事: #{data[:text].inspect}")
+    P.log.info($0) {"地区ごとの返事: #{data[:text].inspect}"}
 
     now  = DateTime.now
-    garb = Garbage::Garbage.new(now)
+    garb = Bot::Garbage.new(now)
 
-    category_name = Project.lang[:ja][:category_name]
+    category_name = P.lang[:ja][:category_name]
 
     message = "次の#{category_name[category]}の回収日は\n"
-    message << "#{garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_s(:ja)} (#{"%d" % a[2]}日後)" } * "\n"}\n"
+    message << "#{garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_lang(:ja)} (#{"%d" % a[2]}日後)" } * "\n"}\n"
     message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
 
     gomi_bot.twitter.favorite(data[:id])
