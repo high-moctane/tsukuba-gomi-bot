@@ -4,6 +4,7 @@ require_relative "../lib/bot"
 require_relative "../lib/extend_date"
 
 include Bot
+include Extend_Date
 
 account = $DEBUG ? :dev : :tsukuba_gominohi_bot
 
@@ -46,9 +47,8 @@ message =
 message << <<"EOS"
 : #{(now + shift).to_lang(lang)}
 #{garb.day(shift: shift).map { |o| o * ": " } * "\n" }
-#{lang_data[lang][:footer]} #{now.strftime("%H:%m")}
+#{lang_data[lang][:footer]} #{now.strftime("%H:%M")}
 EOS
-
 
 
 Bot::Bot.new(account).update(message)
