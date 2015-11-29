@@ -140,10 +140,10 @@ threads << Thread.fork do |data, message, now, garb|
     garb = Bot::Garbage.new(now)
 
     if now.hour < 12
-      message = "今日 #{now.to_s(:ja)}\n"
+      message = "今日 #{now.to_lang(:ja)}\n"
       message << "#{garb.day.map { |a| a.join(": ") }.join("\n")}\n"
     else
-      message = "明日 #{(now + 1).to_s(:ja)}\n"
+      message = "明日 #{(now + 1).to_lang(:ja)}\n"
       message << "#{garb.day(shift: 1).map { |a| a.join(": ") }.join("\n")}\n"
     end
     message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
@@ -167,7 +167,7 @@ threads << Thread.fork do |dist, data, now, garb, message|
     message = "#{P.lang[:ja][:dist_name][dist]}"
     message << "のごみは\n今日 "
 
-    message << "#{garb.week(dist).map { |a| "#{a[0].to_s(:ja)}: #{a[1]}" }.join("\n")}\n"
+    message << "#{garb.week(dist).map { |a| "#{a[0].to_lang(:ja)}: #{a[1]}" }.join("\n")}\n"
     message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
 
     gomi_bot.twitter.favorite(data[:id])
@@ -189,7 +189,7 @@ threads << Thread.fork do |data, category, now, garb, category_name, message|
     category_name = P.lang[:ja][:category_name]
 
     message = "次の#{category_name[category]}の回収日は\n"
-    message << "#{garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_s(:ja)} (#{"%d" % a[2]}日後)" } * "\n"}\n"
+    message << "#{garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_lang(:ja)} (#{"%d" % a[2]}日後)" } * "\n"}\n"
     message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
 
     gomi_bot.twitter.favorite(data[:id])
