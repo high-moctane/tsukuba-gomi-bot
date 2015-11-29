@@ -1,13 +1,15 @@
 # Date を拡張する
 
 # NOTE: モジュール使ってやろうとすると p とか pp とかがエラー吐いてダメ
+# TODO: P がなんか外部ファイルにも影響してるっぽいからどうにかしたい
 
 require "date"
 require_relative "bot/project"
 
 include Bot::Project
 
-p = Bot::Project
+P = Bot::Project
+
 
 module Extend_Date
   def __strings__
@@ -16,7 +18,7 @@ module Extend_Date
     def to_s(lang = nil)
       case lang
       when :ja
-        "#{self.day}日(#{p.lang[:ja][:day_name][self.wday]})"
+        "#{self.day}日(#{P.lang[:ja][:day_name][self.wday]})"
       when :en
         str =
           case day.to_s.split(//).pop
@@ -25,7 +27,7 @@ module Extend_Date
           when "3" then :rd
           else :th
           end
-        "#{p.lang[:en][:day_name][self.wday]}, #{self.day}#{str}"
+        "#{P.lang[:en][:day_name][self.wday]}, #{self.day}#{str}"
       else
         __to_s__
       end
@@ -53,7 +55,7 @@ end
 
 
 if $0 == __FILE__
-  p today = Date.today
+  p today = DateTime.now
   p today.to_s
   p today.to_s(:ja)
   p today.to_s(:en)
