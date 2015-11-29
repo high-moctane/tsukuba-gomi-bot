@@ -90,6 +90,21 @@ module Bot
     end
 
 
+    # 他言語対応のフリ
+    def localize(language)
+      lang           = @@P.lang[language]
+      @dist_name     = lang[:dist_name]
+      @category_name = lang[:category_name]
+
+      @data.each_key do |k|
+        @data[k].default = @category_name[:収集なし]
+        @data[k].each do |key, val|
+          @data[k][key] = @category_name[val]
+        end
+      end
+    end
+
+
     private
 
     # yamlからデータを取り込んで返す
@@ -111,23 +126,6 @@ module Bot
     rescue => e
     @@P.log.fatal($0) { @@P.log_message(e) }
       raise
-    end
-
-
-    # 他言語対応のフリ
-    def localize(language)
-      lang           = @@P.lang[language]
-      @dist_name     = lang[:dist_name]
-      @category_name = lang[:category_name]
-
-      # if language != :ja
-        @data.each_key do |k|
-          @data[k].default = @category_name[:収集なし]
-          @data[k].each do |key, val|
-            @data[k][key] = @category_name[val]
-          end
-        end
-      # end
     end
 
 

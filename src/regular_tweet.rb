@@ -7,34 +7,52 @@ include Bot
 
 account = $DEBUG ? :dev : :tsukuba_gominohi_bot
 
-P = Bot::Project
+p = Bot::Project
 
-P.log.info($0) {"起動"}
+p.log.info($0) {"起動"}
 warn "#{$0} 起動"
 
 
-gomi_bot = Bot::Bot.new(account)
-now      = DateTime.now
-garb     = Bot::Garbage.new(now)
+now       = DateTime.now
+garb      = Bot::Garbage.new(now)
+lang_data = p.lang
 
 
+shift = now.hour.between?(0, 11) ? 0 : 1
 
-message = ""
-if now.hour < 12
-  exit unless garb.any_collect?
-  message << "今日 #{now.to_date.to_s(:ja)}\n"
-  message << "#{garb.day.map { |o| o.join(": ") }.join("\n")}\n"
-else
-  exit unless garb.any_collect?(shift: 1)
-  message << "明日 #{(now + 1).to_date.to_s(:ja)}\n"
-  message << "#{garb.day(shift: 1).map { |o| o.join(": ") }.join("\n")}\n"
+lang = [
+  Array.new(8, :ja),
+  Array.new(2, :en),
+].flatten.sample
+
+
+unless garb.any_collect?(shift: shift)
+  p.log.info($0) { "ごみ収集なしのためつぶやかない" }
+  warn "ごみ収集なしのためつぶやかない"
+  exit
 end
 
-message << "です(｀･ω･´) #{now.strftime("%H:%M")}"
+
+garb.localize(lang)
 
 
-gomi_bot.update(message)
+message =
+  if shift == 0
+    lang_data[lang][:today].to_s
+  else
+    lang_data[lang][:tomorrow].to_s
+  end
+
+message << <<"EOS"
+: #{(now + shift).to_s(lang)}
+#{garb.day(shift: shift).map { |o| o * ": " } * "\n" }
+#{lang_data[lang][:footer]} #{now.strftime("%H:%m")}
+EOS
 
 
-P.log.info($0) {"終了"}
+
+Bot::Bot.new(account).update(message)
+
+
+p.log.info($0) {"終了"}
 warn "#{$0} 終了"
