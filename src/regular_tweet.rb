@@ -44,7 +44,7 @@ message =
   end
 
 message << <<"EOS"
-: #{(now + shift).to_s(lang)}
+: #{(now + shift).to_lang(lang)}
 #{garb.day(shift: shift).map { |o| o * ": " } * "\n" }
 #{lang_data[lang][:footer]} #{now.strftime("%H:%m")}
 EOS
