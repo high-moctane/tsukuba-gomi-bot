@@ -14,14 +14,17 @@
         - 金
         - 土
     :category_name:
-        :燃やせる:           :燃やせる
-        :燃やせない:         :燃やせない
+        :燃やせるごみ:       :燃やせるごみ
+        :燃やせないごみ:     :燃やせないごみ
         :びん・スプレー容器: :びん・スプレー容器
         :粗大ごみ:           :粗大ごみ
         :ペットボトル:       :ペットボトル
         :古紙・古布:         :古紙・古布
         :かん:               :かん
         :収集なし:           :収集なし
+    :today: :今日
+    :tomorrow: :明日
+    :footer: "です(｀･ω･´)"
 
 :en:
     :dist_name:
@@ -38,13 +41,16 @@
         - Fri
         - Sat
     :category_name:
-        :燃やせる:           :"burnable garbage"
-        :燃やせない:         :"non-burnable garbage"
-        :びん・スプレー容器: :"glass bottles and spray cans"
-        :粗大ごみ:           :"oversized garbage"
-        :ペットボトル:       :"plastic bottles"
-        :古紙・古布:         :"used paper and clothes"
-        :かん:               :"cans"
-        :収集なし:           :"no collection"
+        :燃やせるごみ:       :"Burnable garbage"
+        :燃やせないごみ:     :"Non-burnable garbage"
+        :びん・スプレー容器: :"Glass bottles and spray cans"
+        :粗大ごみ:           :"Oversized garbage"
+        :ペットボトル:       :"Plastic bottles"
+        :古紙・古布:         :"Used paper and clothes"
+        :かん:               :"Cans"
+        :収集なし:           :"No collection"
+    :today: :Today
+    :tomorrow: :Tomorrow
+    :footer: "(｀･ω･´)"
 
 
