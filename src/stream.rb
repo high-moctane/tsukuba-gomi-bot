@@ -33,6 +33,9 @@ bot_data = bot.twitter.user.attrs
 data = {}
 garb = Bot::Garbage.new(DateTime.now)
 
+# --------------------------------------------------
+# 普通の返事をする
+#
 regular_reply = ->(message: "") {
   p.log.info($0) { "regular_reply: #{data[:text].inspect}" }
   now  = DateTime.now
@@ -51,7 +54,9 @@ regular_reply = ->(message: "") {
 }
 
 
-
+# --------------------------------------------------
+# 地区別の返事をする
+#
 dist_reply = ->(dist, message: "") {
   p.log.info($0) { "dist_reply: #{data[:text].inspect}" }
   now  = DateTime.now
@@ -68,7 +73,9 @@ dist_reply = ->(dist, message: "") {
 }
 
 
-
+# --------------------------------------------------
+# ごみ検索の返事をする
+#
 search_reply = ->(category, message: "") {
   p.log.info($0) { "search_reply: #{data[:text].inspect}" }
   now  = DateTime.now
@@ -85,11 +92,56 @@ search_reply = ->(category, message: "") {
 }
 
 
-
+# --------------------------------------------------
+# ふぁぼるだけ
+#
 only_favorite = -> {
   p.log.info($0) { "only_favorite : #{data[:text].inspect}" }
   bot.twitter.favorite(data[:id])
 }
+
+
+# --------------------------------------------------
+# おみくじ機能
+#
+lucky_item = ->(message: "", garb_list: nil, prob: nil, item: nil) {
+  p.log.info($0) { "lucky_item: #{data[:text].inspect}" }
+  now  = DateTime.now
+
+  garb_list = %w(
+    燃やせるごみ 燃やせないごみ びん かん スプレー容器
+    粗大ごみ ペットボトル ごみの日bot
+  )
+
+  # NOTE:
+  #   とりあえず[連番, 出やすさ, ごみ名称]みたいな感じで
+  #   なんかいいアルゴリズムないの(´･ω･｀)？
+  garb_list = [
+    [0, 10, "燃やせるごみ"],
+    [1, 10, "燃やせないごみ"],
+    [2, 5,  "びん"],
+    [3, 5,  "かん"],
+    [4, 5,  "スプレー容器"],
+    [5, 10, "粗大ごみ"],
+    [6, 5,  "ペットボトル"],
+    [7, 1,  "ごみの日bot(｀･ω･´)"],
+  ]
+
+  item = garb_list.map { |a| [a[0]] * a[1] }.flatten.sample
+  prob = garb_list[item][1].fdiv(garb_list.inject(0) {|sum, a| sum + a[1]})
+
+
+  message = <<-"EOS"
+今日のラッキーアイテムは
+  #{garb_list[item][2]} (出現率#{"%.1f" % (prob * 100)}％)
+です(｀･ω･´) #{now.strftime("%H:%M")}
+  EOS
+
+  bot.twitter.favorite(data[:id])
+  bot.update(message, id: data[:id], id_name: data[:screen_name])
+}
+
+
 
 
 
@@ -126,17 +178,6 @@ threads << Thread.fork do |tweet|
   loop do
     tweet = tweets.pop
 
-
-    data = {
-      retweet?:                tweet.retweet?,
-      reply?:                  tweet.reply?,
-      user_id:                 tweet.user.id,
-      in_reply_to_screen_name: tweet.in_reply_to_screen_name,
-      text:                    tweet.text,
-      id:                      tweet.id,
-      screen_name:             tweet.user.screen_name,
-    }
-
     data = tweet.attrs
     data[:screen_name] = tweet.user.screen_name
 
@@ -160,6 +201,9 @@ threads << Thread.fork do |tweet|
     message = text.split.delete_if { |item| /\A@/ === item }
     p.log.debug($0) {"解析: #{data[:text].inspect}"}
 
+    # TODO: 自分へのリプの場合は "ごみ" とかいらないと思うので、
+    #   そういうのいらない実装をする。
+
     # 部分的に検索
     case message[0]
     when /^(ごみ|ゴミ|gomi)($|((の|no)(日|ひ|hi)))/i
@@ -172,9 +216,9 @@ threads << Thread.fork do |tweet|
         dist_reply[:南地区]
       when /^(北|きた|kita)/i
         dist_reply[:北地区]
-      when /^(燃|も|mo)(やせ|え|yase|e)(る|ru)/i
+      when /^(燃|萌|も|mo)(やせ|え|yase|e)(る|ru)/i
         search_reply[:燃やせるごみ]
-      when /^(燃|も|mo)(やせ|え|yase|e)(ない|nai)/
+      when /^(燃|萌|も|mo)(やせ|え|yase|e)(ない|nai)/
         search_reply[:燃やせないごみ]
       when /^(ペット|ぺっと|petto|pet)/i
         search_reply[:ペットボトル]
@@ -186,6 +230,8 @@ threads << Thread.fork do |tweet|
         search_reply[:かん]
       when /紙|布|^(koshi|kosi|kofu)/i
         search_reply[:古紙・古布]
+      when /^(おみくじ|omikuji|(占|うらな)い|ラッキー|(運勢|うんせい))/i
+        lucky_item[]
       else
         regular_reply[]
       end
