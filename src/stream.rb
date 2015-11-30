@@ -15,12 +15,11 @@ tweets  = Queue.new
 
 
 account = $DEBUG ? :dev : :tsukuba_gominohi_bot
+account = :shakiin
 
 bot = Bot::Bot.new(account, stream: true)
 
-# TODO: これはuser.attrs とかでいいような気もする
-my_id = bot.twitter.user.id
-my_screen_name = bot.twitter.user.screen_name
+bot_data = bot.twitter.user.attrs
 
 
 # ----------------------------------------------------------------------
@@ -35,9 +34,9 @@ data = {}
 garb = Bot::Garbage.new(DateTime.now)
 
 regular_reply = ->(message: "") {
-  p.log.info($0) { "regular reply: #{data[:text].inspect}" }
+  p.log.info($0) { "regular_reply: #{data[:text].inspect}" }
   now  = DateTime.now
-  garb = Bot::Garbage.new(now) if garb.date != now.to_date
+  garb = Bot::Garbage.new(now) unless garb.date == now.to_date
 
   shift = now.hour.between?(0, 11) ? 0 : 1
 
@@ -54,9 +53,9 @@ regular_reply = ->(message: "") {
 
 
 dist_reply = ->(dist, message: "") {
-  p.log.info($0) { "dist reply: #{data[:text].inspect}" }
+  p.log.info($0) { "dist_reply: #{data[:text].inspect}" }
   now  = DateTime.now
-  garb = Bot::Garbage.new(now) if garb.nil? || garb.date != now.to_date
+  garb = Bot::Garbage.new(now) unless garb.date == now.to_date
 
   message = <<-"EOS"
 #{dist}のごみは
@@ -71,9 +70,9 @@ dist_reply = ->(dist, message: "") {
 
 
 search_reply = ->(category, message: "") {
-  p.log.info($0) { "search reply: #{data[:text].inspect}" }
+  p.log.info($0) { "search_reply: #{data[:text].inspect}" }
   now  = DateTime.now
-  garb = Bot::Garbage.new(now) if garb.nil? || garb.date != now.to_date
+  garb = Bot::Garbage.new(now) unless garb.date == now.to_date
 
   message = <<-"EOS"
 次の#{category}の回収日は
@@ -88,7 +87,7 @@ search_reply = ->(category, message: "") {
 
 
 only_favorite = -> {
-  p.log.info($0) { "only favorite : #{data[:text].inspect}" }
+  p.log.info($0) { "only_favorite : #{data[:text].inspect}" }
   bot.twitter.favorite(data[:id])
 }
 
@@ -127,6 +126,7 @@ threads << Thread.fork do |tweet|
   loop do
     tweet = tweets.pop
 
+
     data = {
       retweet?:                tweet.retweet?,
       reply?:                  tweet.reply?,
@@ -137,6 +137,8 @@ threads << Thread.fork do |tweet|
       screen_name:             tweet.user.screen_name,
     }
 
+    data = tweet.attrs
+    data[:screen_name] = tweet.user.screen_name
 
     p.log.debug($0) {"ストリーム: #{data[:text].inspect}"}
 
@@ -145,9 +147,9 @@ threads << Thread.fork do |tweet|
     # 処理しないものはここで next して弾く
     #
 
-    next if data[:retweet?]
-    next if data[:user_id] == my_id
-    next if data[:reply?] && data[:in_reply_to_screen_name] != my_screen_name
+    next if data.key?(:retweeted_status)
+    next if data[:screen_name] == bot_data[:screen_name]
+    next if data[:in_reply_to_user_id].nil?.! && data[:in_reply_to_screen_name] != bot_data[:screen_name]
 
 
     # --------------------------------------------------
@@ -190,12 +192,20 @@ threads << Thread.fork do |tweet|
     else
       # 全文を検索する
       case data[:text]
-      when /(起|お)きた|むくり|おはよ|okita|ohayo|mukuri/i
+      when /(起|お)き|むくり|おは/i
         regular_reply[] if DateTime.now.hour.between?(4, 10)
-      when /(\(|（)(｀|`)(･|・)ω(･|・)(´|')\)|(\(|（)(´|')(･|・)ω(･|・)(｀|`)\)/
+      when /(\(|（)(｀|`)(･|・)ω(･|・)(´|')\)/
+        only_favorite[]
+      when /(\(|（)(´|')(･|・)ω(･|・)(｀|`)\)/
+        only_favorite[]
+      when /(\(|（)(´|')(;|；)ω(;|；)(｀|`)\)/
+        only_favorite[]
+      when /ぽわ(ー|〜)/
+        only_favorite[]
+      when /I-\('-ω-be\) をしながら/
         only_favorite[]
       else
-        regular_reply[] if data[:in_reply_to_screen_name] == my_screen_name
+        regular_reply[] if data[:in_reply_to_screen_name] == bot_data[:screen_name]
       end
     end
 
