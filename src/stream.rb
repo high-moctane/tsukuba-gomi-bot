@@ -108,11 +108,6 @@ lucky_item = ->(message: "", garb_list: nil, prob: nil, item: nil) {
   p.log.info($0) { "lucky_item: #{data[:text].inspect}" }
   now  = DateTime.now
 
-  garb_list = %w(
-    燃やせるごみ 燃やせないごみ びん かん スプレー容器
-    粗大ごみ ペットボトル ごみの日bot
-  )
-
   # NOTE:
   #   とりあえず[連番, 出やすさ, ごみ名称]みたいな感じで
   #   なんかいいアルゴリズムないの(´･ω･｀)？
@@ -156,10 +151,29 @@ threads << Thread.fork do
   p.log.info($0) { "TL監視準備開始" }
   warn "TL監視準備開始\n"
   begin
-    # TODO: ここで規制かかった時とかの処理もかけるらしい
-    bot.stream.userstream do |tweet|
+    bot.stream.on_inited {
+      warn "サーバ接続完了\n"
+      p.log.debug($0) {"on_inited: サーバ接続完了"}
+    }.on_limit { |skip_count|
+      # todo: 実装まだ
+      warn :on_limit
+      p.log.debug($0) {"on_limit: #{skip_count.inspect}"}
+    }.on_direct_message { |direct_message|
+      # todo: 実装まだ
+      warn :on_direct_message
+      pp direct_message.attrs
+      p.log.debug($0) {"on_direct_message: #{direct_message.inspect}"}
+    }.on_error { |message|
+      # todo: 実装まだ
+      warn :on_error
+      p.log.debug($0) {"on_error: #{message.inspect}"}
+    }.on_reconnect { |timeout, retries|
+      # todo: 実装まだ
+      warn :on_reconnect
+      p.log.debug($0) {"on_reconnect: #{[timeout.inspect, retries.inspect]}"}
+    }.userstream { |tweet|
       tweets.push(tweet)
-    end
+    }
   rescue => e
     p.log.fatal($0) {P.log_message(e)}
     raise
