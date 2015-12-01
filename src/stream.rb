@@ -15,7 +15,6 @@ tweets  = Queue.new
 
 
 account = $DEBUG ? :dev : :tsukuba_gominohi_bot
-account = :shakiin
 
 bot = Bot::Bot.new(account, stream: true)
 
@@ -111,6 +110,7 @@ lucky_item = ->(message: "", garb_list: nil, prob: nil, item: nil) {
   # NOTE:
   #   とりあえず[連番, 出やすさ, ごみ名称]みたいな感じで
   #   なんかいいアルゴリズムないの(´･ω･｀)？
+  # TODO: とりあえず連番くらいはメソッドで追加できそう
   garb_list = [
     [0, 10, "燃やせるごみ"],
     [1, 10, "燃やせないごみ"],
@@ -119,7 +119,9 @@ lucky_item = ->(message: "", garb_list: nil, prob: nil, item: nil) {
     [4, 5,  "スプレー容器"],
     [5, 10, "粗大ごみ"],
     [6, 5,  "ペットボトル"],
-    [7, 1,  "ごみの日bot(｀･ω･´)"],
+    [7, 5,  "古紙"],
+    [8, 5,  "古布"],
+    [9, 1,  "ごみの日bot(｀･ω･´)"],
   ]
 
   item = garb_list.map { |a| [a[0]] * a[1] }.flatten.sample
@@ -152,27 +154,37 @@ threads << Thread.fork do
   warn "TL監視準備開始\n"
   begin
     bot.stream.on_inited {
+
       warn "サーバ接続完了\n"
-      p.log.debug($0) {"on_inited: サーバ接続完了"}
+      p.log.info($0) {"on_inited: サーバ接続完了"}
+
     }.on_limit { |skip_count|
-      # todo: 実装まだ
-      warn :on_limit
-      p.log.debug($0) {"on_limit: #{skip_count.inspect}"}
+
+      warn "on_limit: API規制\n"
+      p.log.error($0) {"on_limit: API規制"}
+      # todo:
+      #   ここでワーカースレッドを停止させるようにしたい？
+
     }.on_direct_message { |direct_message|
+
       # todo: 実装まだ
       warn :on_direct_message
-      pp direct_message.attrs
       p.log.debug($0) {"on_direct_message: #{direct_message.inspect}"}
+
     }.on_error { |message|
-      # todo: 実装まだ
-      warn :on_error
-      p.log.debug($0) {"on_error: #{message.inspect}"}
+
+      warn "on_error: #{message.inspect}\n"
+      p.log.error($0) {"on_error: #{message.inspect}"}
+
     }.on_reconnect { |timeout, retries|
-      # todo: 実装まだ
-      warn :on_reconnect
-      p.log.debug($0) {"on_reconnect: #{[timeout.inspect, retries.inspect]}"}
+
+      warn "on_reconnect: 再接続完了\n"
+      p.log.info($0) {"on_reconnect: #{[timeout.inspect, retries.inspect]}"}
+
     }.userstream { |tweet|
+
       tweets.push(tweet)
+
     }
   rescue => e
     p.log.fatal($0) {P.log_message(e)}
@@ -244,7 +256,7 @@ threads << Thread.fork do |tweet|
         search_reply[:かん]
       when /紙|布|^(koshi|kosi|kofu)/i
         search_reply[:古紙・古布]
-      when /^(おみくじ|omikuji|(占|うらな)い|ラッキー|(運勢|うんせい))/i
+      when /^(御神籤|(おみ|ごみ|ゴミ)くじ|omikuji|(占|うらな)い|ラッキー|(運勢|うんせい))/i
         lucky_item[]
       else
         regular_reply[]
