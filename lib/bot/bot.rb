@@ -35,6 +35,7 @@ module Bot
     end
 
 
+    # 普通のツイート
     def update(string, id: nil, id_name: "")
       self.class.format_message(string, id_name: id_name).each do |str|
         obj = @twitter.update(str, {in_reply_to_status_id: id})
@@ -50,21 +51,43 @@ module Bot
     end
 
 
+
+    # DM
+    def dm(user, message)
+      @twitter.create_direct_message(user, message)
+    rescue => e
+      @@P.log.error($0) { @@P.log_message(e) }
+      false
+    else
+      @@P.log.info($0) { "DM: to: #{user}, message: #{message.inspect}" }
+      warn "DM: #{message.inspect}\n"
+      true
+    end
+
+
+
+    # フォロワーのIDリスト
     def follower_ids(account = nil)
       chain_cursor("follower_ids(#{account ? %{"#{account}"} : "nil"}, {cursor: cursor})")
     end
 
 
+
+    # フォローのIDリスト
     def friend_ids(account = nil)
       chain_cursor("friend_ids(#{account ? %{"#{account}"} : "nil"}, {cursor: cursor})")
     end
 
 
+
+    # フォロリク申請中のIDリスト
     def friendships_outgoing
       chain_cursor("friendships_outgoing({cursor: cursor})")
     end
 
 
+
+    # フォローする
     def follow(id)
       @twitter.follow(id)
     rescue => e
@@ -76,6 +99,8 @@ module Bot
     end
 
 
+
+    # フォロー外す
     def unfollow(id)
       @twitter.unfollow(id)
     rescue => e
@@ -87,9 +112,11 @@ module Bot
     end
 
 
+
+
     private
 
-
+    # gem twitter のクライアントを生成
     def init_twitter(keys)
       Twitter::REST::Client.new do |config|
         config.consumer_key        = keys[:consumer_key]
@@ -103,6 +130,8 @@ module Bot
     end
 
 
+
+    # gem tweetstream のクライアントを生成
     def init_tweetstream(keys)
       TweetStream.configure do |config|
         config.consumer_key       = keys[:consumer_key]
@@ -117,6 +146,7 @@ module Bot
       @@P.log.fatal($0) {@@P.log_message(e)}
       raise
     end
+
 
 
     # カーソルで何回もデータをとってこなきゃいけないものに対応している
@@ -134,6 +164,7 @@ module Bot
     else
       ids.flatten
     end
+
 
 
     # クラスメソッドにはTwitter関連のを入れる
@@ -156,6 +187,8 @@ module Bot
         ans.map {|str| id_name + str}
       end
     end
+
+
 
   rescue => e
     @@P.log.fatal($0) { @@P.log_message(e) }

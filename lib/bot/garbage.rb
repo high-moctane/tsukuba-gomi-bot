@@ -17,17 +17,15 @@ module Bot
   #   カレンダーから読み込んだデータをいい感じに取り扱うクラス
   class Garbage
     @@P = Project
-    @@dist = [:North, :West, :East, :South]
+    @@dist = [:北地区, :西地区, :東地区, :南地区]
     attr_reader :data, :date
 
 
-    def initialize(date, lang: :ja)
+    def initialize(date)
       @date = date.to_date
 
       load_data(@date)
       load_data(@date >> 1) # 月をまたいだ時に困るから
-
-      localize(lang)
 
       @@P.log.debug($0) { "Garbage のインスタンス生成 (@date = #{@date})" }
     end
@@ -39,7 +37,7 @@ module Bot
       date = @date + shift
       ans = []
       dist.each do |k|
-        ans << [@dist_name[k], @data[k][date]]
+        ans << [k, @data[k][date]]
       end
       ans
     end
@@ -63,12 +61,10 @@ module Bot
       dist = [dist].flatten
       ans = []
 
-      garb = @category_name[garb]
-
       dist.each do |k|
         (0..30).each do |i|
           if garb == @data[k][date + i]
-            ans << [@dist_name[k], @date + i, i]
+            ans << [k, @date + i, i]
             break
           end
         end
@@ -87,21 +83,6 @@ module Bot
         flag = true if @data[k].has_key?(date)
       end
       flag
-    end
-
-
-    # 他言語対応のフリ
-    def localize(language)
-      lang           = @@P.lang[language]
-      @dist_name     = lang[:dist_name]
-      @category_name = lang[:category_name]
-
-      @data.each_key do |k|
-        @data[k].default = @category_name[:収集なし]
-        @data[k].each do |key, val|
-          @data[k][key] = @category_name[val]
-        end
-      end
     end
 
 
@@ -142,11 +123,11 @@ if $0 == __FILE__
   include Bot
   require "date"
   require_relative "../extend_date"
-  obj = Bot::Garbage.new(Date.today)
+  obj = Bot::Garbage.new(Date.today + 2)
   # obj = Bot::Garbage.new(Date.today, lang: :en)
-  obj.data[:North][0]
+  pp obj.data[:北地区][0]
   pp obj.day
-  pp obj.week(:North)
+  pp obj.week(:北地区)
   pp obj.next_collect(:ペットボトル)
   pp obj.any_collect?
 end
