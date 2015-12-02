@@ -267,6 +267,8 @@ threads << Thread.fork do |tweet|
       case data[:text]
       when /(起|お)き|むくり|おは/i
         regular_reply[] if DateTime.now.hour.between?(4, 10)
+      when /^((ごみ|ゴミ)くじ|gomikuji)/i
+        lucky_item[]
       when /(\(|（)(｀|`)(･|・)ω(･|・)(´|')\)/
         only_favorite[]
       when /(\(|（)(´|')(･|・)ω(･|・)(｀|`)\)/
@@ -277,8 +279,6 @@ threads << Thread.fork do |tweet|
         only_favorite[]
       when /I-\('-ω-be\) をしながら/
         only_favorite[]
-      when /^((ごみ|ゴミ)くじ|gomikuji)/i
-        lucky_item[]
       else
         regular_reply[] if data[:in_reply_to_screen_name] == bot_data[:screen_name]
       end
