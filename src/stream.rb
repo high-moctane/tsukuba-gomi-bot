@@ -225,7 +225,7 @@ threads << Thread.fork do |tweet|
     #
 
     text = data[:text]
-    message = text.split.delete_if { |item| /\A@/ === item }
+    message = text.split(/\s|\p{blank}/).delete_if { |item| /\A@/ === item }
     p.log.debug($0) {"解析: #{data[:text].inspect}"}
 
     # TODO: 自分へのリプの場合は "ごみ" とかいらないと思うので、
