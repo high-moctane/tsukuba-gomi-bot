@@ -112,16 +112,17 @@ lucky_item = ->(message: "", garb_list: nil, prob: nil, item: nil) {
   #   なんかいいアルゴリズムないの(´･ω･｀)？
   # TODO: とりあえず連番くらいはメソッドで追加できそう
   garb_list = [
-    [0, 10, "燃やせるごみ"],
-    [1, 10, "燃やせないごみ"],
+    [0, 15, "燃やせるごみ"],
+    [1, 15, "燃やせないごみ"],
     [2, 5,  "びん"],
     [3, 5,  "かん"],
     [4, 5,  "スプレー容器"],
-    [5, 10, "粗大ごみ"],
+    [5, 15, "粗大ごみ"],
     [6, 5,  "ペットボトル"],
-    [7, 5,  "古紙"],
-    [8, 5,  "古布"],
+    [7, 10,  "古紙"],
+    [8, 11,  "古布"],
     [9, 1,  "ごみの日bot(｀･ω･´)"],
+    [10, 5,  "指定ごみ袋"],
   ]
 
   item = garb_list.map { |a| [a[0]] * a[1] }.flatten.sample
@@ -272,10 +273,12 @@ threads << Thread.fork do |tweet|
         only_favorite[]
       when /(\(|（)(´|')(;|；)ω(;|；)(｀|`)\)/
         only_favorite[]
-      when /ぽわ(ー|〜)/
+      when /ぽわ/
         only_favorite[]
       when /I-\('-ω-be\) をしながら/
         only_favorite[]
+      when /^((ごみ|ゴミ)くじ|gomikuji)/i
+        lucky_item[]
       else
         regular_reply[] if data[:in_reply_to_screen_name] == bot_data[:screen_name]
       end
