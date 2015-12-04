@@ -10,7 +10,7 @@ module Extend_Date
   def to_lang(lang)
     case lang
     when :ja
-      "#{self.day}日(#{Bot::Project.lang[:ja][:day_name][self.wday]})"
+      "#{self.month}月#{self.day}日(#{Bot::Project.lang[:ja][:day_name][self.wday]})"
     when :en
       str =
         case day.to_s.split(//).pop

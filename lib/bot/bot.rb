@@ -95,6 +95,7 @@ module Bot
       false
     else
       @@P.log.info($0) {"follow: #{id}"}
+      puts "Twitter_id #{id} をフォローしました"
       true
     end
 
@@ -108,6 +109,7 @@ module Bot
       false
     else
       @@P.log.info($0) {"unfollow: #{id}"}
+      puts "Twitter_id #{id} をリムーブしました"
       true
     end
 
