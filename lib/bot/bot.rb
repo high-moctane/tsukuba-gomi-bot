@@ -36,8 +36,8 @@ module Bot
 
 
     # 普通のツイート
-    def update(string, id: nil, id_name: "")
-      self.class.format_message(string, id_name: id_name).each do |str|
+    def update(string, id: nil, screen_name: "")
+      self.class.format_message(string, screen_name: screen_name).each do |str|
         obj = @twitter.update(str, {in_reply_to_status_id: id})
         id = obj.id
 
@@ -172,19 +172,22 @@ module Bot
 
       # 140以内に適当に分割する
       # Note: 改行で優先的にきっている
-      def format_message(message, id_name: "")
-        id_name = "@" + id_name + "\n" unless id_name == ""
+      # FIXME: なんか連投すると最初が空文字列になる
+      def format_message(message, screen_name: "")
+        screen_name = "@" + screen_name + "\n" unless screen_name == ""
+        footer = " " + [*0..9].sample(3).join
+        main_size = 140 - screen_name.size - footer.size - 1
         ans = [""]
         i = 0
-        message.scan(/^\n|.{1,#{140 - id_name.size}}/)
+        message.scan(/^\n|.{1,#{140 - screen_name.size - footer.size}}/)
         .map { |s| s << "\n" }.each do |str|
-          if (ans[i] + str).size > 140 - id_name.size
+          if (ans[i] + str).size > 140 - screen_name.size - footer.size
             i += 1
             ans[i] = ""
           end
           ans[i] << str
         end
-        ans.map {|str| id_name + str}
+        ans.map {|str| screen_name + str.chomp + footer}
       end
     end
 
@@ -201,5 +204,10 @@ end
 # debug
 if $0 == __FILE__
   include Bot
-  pp _obj = Bot::Bot.new(:dev)
+  message = <<"EOS"
+彼は本郷の叔父さんの家から僕と同じ本所ほんじょの第三中学校へ通かよっていた。彼が叔父さんの家にいたのは両親のいなかったためである。両親のいなかったためと云っても、母だけは死んではいなかったらしい。彼は父よりもこの母に、――このどこへか再縁さいえんした母に少年らしい情熱を感じていた。彼は確かある年の秋、僕の顔を見るが早いか、吃どもるように僕に話しかけた。
+「僕はこの頃僕の妹が（妹が一人あったことはぼんやり覚えているんだがね。）縁えんづいた先を聞いて来たんだよ。今度の日曜にでも行って見ないか？」
+　僕は早速さっそく彼と一しょに亀井戸かめいどに近い場末ばすえの町へ行った。彼の妹の縁づいた先は存外ぞんがい見つけるのに暇ひまどらなかった。それは床屋とこやの裏になった棟割むねわり長屋ながやの一軒だった。主人は近所の工場こうじょうか何かへ勤つとめに行った留守るすだったと見え、造作ぞうさくの悪い家の中には赤児あかごに乳房ちぶさを含ませた細君、――彼の妹のほかに人かげはなかった。彼の妹は妹と云っても、彼よりもずっと大人おとなじみていた。のみならず切れの長い目尻めじりのほかはほとんど彼に似ていなかった
+EOS
+  pp _obj = Bot::Bot.new(:dev).update(message)
 end

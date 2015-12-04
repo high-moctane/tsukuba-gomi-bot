@@ -19,8 +19,9 @@ module Bot
     @@P = Project
     @@lucky_item_list = @@P.config[:gomikuji_item]
 
+
     def initialize
-      garb_init
+      garb_update
       @@P.log.debug($0) { "Message: インスタンス生成完了" }
     end
 
@@ -30,13 +31,18 @@ module Bot
     def garb_regular
       garb_update
 
-      shift = @now.hour.between?(0, 11) ? 0 : 1
+      if @garb.any_collect?(shift: @garb_shift)
+        <<-"EOS"
+#{%w(今日 明日)[@garb_shift]} #{(@now + @garb_shift).to_lang(:ja)}
+#{@garb.day(shift: @garb_shift).map { |a| a * ": " } * "\n"}
+です#{shakiin}
+        EOS
+      else
+        <<-"EOS"
+#{%w(今日 明日)[@garb_shift]} #{(@now + @garb_shift).to_lang(:ja)} の収集はありません#{shakiin}
+        EOS
+      end
 
-      <<-"EOS"
-#{%w(今日 明日)[shift]} #{@now.to_lang(:ja)}
-#{@garb.day(shift: shift).map { |a| a * ": " } * "\n"}
-です(｀･ω･´)
-      EOS
     end
 
 
@@ -47,8 +53,8 @@ module Bot
 
       <<-"EOS"
 #{dist}のごみは
-今日 #{@garb.week(dist).map { |a| "#{a[0].to_lang(:ja)}: #{a[1]}" } * "\n"}
-です(｀･ω･´)
+#{%w(今日 明日)[@garb_shift]} #{@garb.week(dist, shift: @garb_shift).map { |a| "#{a[0].to_lang(:ja)}: #{a[1]}" } * "\n"}
+です#{shakiin}
       EOS
     end
 
@@ -59,9 +65,10 @@ module Bot
       garb_update
 
       <<-"EOS"
-次の#{category}の回収日は
-#{@garb.next_collect(category).map { |a| "#{a[0]}: #{a[1].to_lang(:ja)} (#{"%d" % a[2]}日後)" } * "\n"}
-です(｀･ω･´)
+次の#{category}の回収日は、今日を含め#{%w(る ない)[@garb_shift]}と
+#{@garb.next_collect(category, shift: @garb_shift)
+.map { |a| "#{a[0]}: #{a[1].to_lang(:ja)} (#{"%d" % a[2]}日後)" } * "\n"}
+です#{shakiin}
       EOS
     end
 
@@ -82,27 +89,28 @@ module Bot
       <<-"EOS"
 今日のラッキーアイテムは
   #{item_list[item][2]} (出現率#{"%.1f" % (prob * 100)}％)
-です(｀･ω･´)
+です#{shakiin}
       EOS
     end
 
+
+
+    # (｀･ω･´) が現在時刻によって寝る
+    def shakiin
+      @now = DateTime.now
+      @now.hour.between?(6, 22) ? "(｀･ω･´)" : "(｀-ω-´)zzZ"
+    end
 
 
 
     private
 
 
-    def garb_init
-      @now  = DateTime.now
-      @garb = Garbage.new(@now)
-    end
-
-
-
     # @garbをアップデートする必要があるとき使う
     def garb_update
-      @now  = DateTime.now
-      @garb = Garbage.new(@now) unless @garb.date == @now.to_date
+      @now        = DateTime.now
+      @garb       = Garbage.new(@now) if @garb.nil? || @garb.date != @now.to_date
+      @garb_shift = @now.hour.between?(0, 11) ? 0 : 1
     end
 
 
@@ -122,4 +130,6 @@ if $0 == __FILE__
   puts obj.garb_dist(:北地区)
   puts obj.garb_search(:ペットボトル)
   puts obj.lucky_item
+  puts obj.shakiin
 end
+
