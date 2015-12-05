@@ -14,7 +14,7 @@ threads  = []
 statuses = Queue.new
 
 
-account  = $DEBUG ? :dev : :tsukuba_gominohi_bot
+account  = $DEBUG ? :shakiin : :tsukuba_gominohi_bot
 bot = Bot::Bot.new(account, stream: true)
 bot_user = bot.twitter.user.attrs
 
@@ -43,7 +43,7 @@ threads << Thread.fork do |e|
       #   ここでワーカースレッドを停止させるようにしたい？
 
     }.on_direct_message { |direct_message|
-      statuses.push({status: direct_message, dm?: true})
+      # statuses.push({status: direct_message, dm?: true})
       p.log.debug($0) {"on_direct_message: #{direct_message.inspect}"}
 
     }.on_error { |message|
@@ -121,10 +121,8 @@ threads << Thread.fork do
     # 返事する場合はtrue, しない場合は false を返す
     limit_counter = ->(now: Time.now) {
       if limit_count.key?(data[:user][:id])
-        # TODO: 何分間に何回の制限は外部ファイルで設定できるようにする
-        #   暫定的に5分間に20回までとする
-        limit_count[data[:user][:id]].reject! { |i| now - i > 5 * 60 }
-        if limit_count[data[:user][:id]].size > 20
+        limit_count[data[:user][:id]].reject! { |i| now - i > p.config[:limit_sec] }
+        if limit_count[data[:user][:id]].size > p.config[:limit_count]
           p.log.info($0) {"reply_limit: #{status.inspect}"}
           next false
         else
