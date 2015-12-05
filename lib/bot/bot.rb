@@ -189,7 +189,7 @@ module Bot
           end
           ans[i] << str
         end
-        ans.map {|str| screen_name + str.chomp + footer}
+        ans.map {|str| screen_name + str.chomp.chomp + footer}
       end
     end
 
