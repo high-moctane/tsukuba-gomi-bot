@@ -28,9 +28,9 @@ new_follow.sample(10).each do |id|
   #   当面は日本のアカウントのみフォロー
   #   botっぽいのもフォローしない
   if data[:lang] == "ja" \
-    && data[:screen_name] !~ /bot/i \
-    && data[:name] !~ /bot|ボット|ぼっと/i \
-    && data[:name] !~ /bot|ボット|ぼっと/i
+    && data[:screen_name] !~ /[^r][^o]bot/i \
+    && data[:name] !~ /bot|[^ロ]ボット|[^ろ]ぼっと/i \
+    && data[:description] !~ /bot|[^ロ]ボット|[^ろ]ぼっと/i
 
     gomi_bot.follow(id)
   end
