@@ -180,9 +180,7 @@ module Bot
         main_size = 140 - screen_name.size - footer.size
         ans = [""]
         i = 0
-        message.scan(/.{,#{main_size}}\n|.{1,#{main_size}}/)
-        .map { |s| s << "\n" }.each do |str|
-          p (ans[i] + str).size
+        message.scan(/.{,#{main_size}}\n|.{1,#{main_size}}/).each do |str|
           if (ans[i] + str).size > main_size + 1
             i += 1
             ans[i] = ""

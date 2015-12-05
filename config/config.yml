@@ -13,8 +13,8 @@
 :log_level:       :INFO
 :log_level_debug: :DEBUG
 
-:limit_sec:       :300
-:limit_count:     :20
+:limit_sec:       300.0
+:limit_count:     20
 
 # ----------------------------------------------------------------------
 # ゴミくじの出るもの
