@@ -83,12 +83,12 @@ module Bot
 
       item = item_list.map { |a| [a[0]] * a[1] }.flatten.sample
 
-      # TODO: レア度の実装をしたい
+      # TODO: レア度の実装をちゃんとしたい
       prob = item_list[item][1].fdiv(item_list.inject(0) {|sum, a| sum + a[1]})
 
       <<-"EOS"
 今日のラッキーアイテムは
-  #{item_list[item][2]} (出現率#{"%.1f" % (prob * 100)}％)
+  #{item_list[item][2]} (レア度 #{"★" * (4 - item_list[item][1])}#{"☆" * (item_list[item][1] - 1)})
 です#{shakiin}
       EOS
     end
