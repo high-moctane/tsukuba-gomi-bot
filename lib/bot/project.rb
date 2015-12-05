@@ -23,7 +23,6 @@ module Bot
 
     def log
       return @logger unless @logger.nil?
-      puts :a
 
       level = {
         FATAL: Logger::FATAL,

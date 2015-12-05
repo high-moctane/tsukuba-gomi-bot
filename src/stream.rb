@@ -121,10 +121,8 @@ threads << Thread.fork do
     # 返事する場合はtrue, しない場合は false を返す
     limit_counter = ->(now: Time.now) {
       if limit_count.key?(data[:user][:id])
-        # TODO: 何分間に何回の制限は外部ファイルで設定できるようにする
-        #   暫定的に5分間に20回までとする
-        limit_count[data[:user][:id]].reject! { |i| now - i > 5 * 60 }
-        if limit_count[data[:user][:id]].size > 20
+        limit_count[data[:user][:id]].reject! { |i| now - i > p.config[:limit_sec] }
+        if limit_count[data[:user][:id]].size > p.config[:limit_count]
           p.log.info($0) {"reply_limit: #{status.inspect}"}
           next false
         else
