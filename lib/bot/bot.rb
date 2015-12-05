@@ -36,8 +36,8 @@ module Bot
 
 
     # 普通のツイート
-    def update(string, id: nil, id_name: "")
-      self.class.format_message(string, id_name: id_name).each do |str|
+    def update(string, id: nil, screen_name: "")
+      self.class.format_message(string, screen_name: screen_name).each do |str|
         obj = @twitter.update(str, {in_reply_to_status_id: id})
         id = obj.id
 
@@ -95,6 +95,7 @@ module Bot
       false
     else
       @@P.log.info($0) {"follow: #{id}"}
+      puts "Twitter_id #{id} をフォローしました"
       true
     end
 
@@ -108,6 +109,7 @@ module Bot
       false
     else
       @@P.log.info($0) {"unfollow: #{id}"}
+      puts "Twitter_id #{id} をリムーブしました"
       true
     end
 
@@ -172,19 +174,20 @@ module Bot
 
       # 140以内に適当に分割する
       # Note: 改行で優先的にきっている
-      def format_message(message, id_name: "")
-        id_name = "@" + id_name + "\n" unless id_name == ""
+      def format_message(message, screen_name: "")
+        screen_name = "@" + screen_name + "\n" unless screen_name == ""
+        footer = " " + [*0..9].sample(3).join
+        main_size = 140 - screen_name.size - footer.size
         ans = [""]
         i = 0
-        message.scan(/^\n|.{1,#{140 - id_name.size}}/)
-        .map { |s| s << "\n" }.each do |str|
-          if (ans[i] + str).size > 140 - id_name.size
+        message.scan(/.{,#{main_size}}\n|.{1,#{main_size}}/).each do |str|
+          if (ans[i] + str).size > main_size + 1
             i += 1
             ans[i] = ""
           end
           ans[i] << str
         end
-        ans.map {|str| id_name + str}
+        ans.map {|str| screen_name + str.chomp.chomp + footer}
       end
     end
 
@@ -201,5 +204,4 @@ end
 # debug
 if $0 == __FILE__
   include Bot
-  pp _obj = Bot::Bot.new(:dev)
 end

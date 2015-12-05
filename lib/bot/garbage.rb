@@ -57,14 +57,14 @@ module Bot
     end
 
 
-    def next_collect(garb, dist = @@dist)
+    def next_collect(garb, dist = @@dist, shift: 0)
       dist = [dist].flatten
       ans = []
 
       dist.each do |k|
         (0..30).each do |i|
-          if garb == @data[k][date + i]
-            ans << [k, @date + i, i]
+          if garb == @data[k][date + shift + i]
+            ans << [k, @date + shift + i, shift + i]
             break
           end
         end
@@ -128,6 +128,6 @@ if $0 == __FILE__
   pp obj.data[:北地区][0]
   pp obj.day
   pp obj.week(:北地区)
-  pp obj.next_collect(:ペットボトル)
+  pp obj.next_collect(:ペットボトル, shift: 5)
   pp obj.any_collect?
 end
