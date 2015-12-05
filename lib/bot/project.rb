@@ -4,23 +4,27 @@ require "pp"
 
 # このプロジェクトに関する情報を扱う
 module Bot
+
   module Project
     def root_dir
-      File.expand_path("../../../", __FILE__) + "/"
+      @root_dir ||= File.expand_path("../../../", __FILE__) + "/"
     end
 
 
     def config
-      YAML.load_file(root_dir + "config/config.yml")
+      @config ||= YAML.load_file(root_dir + "config/config.yml")
     end
 
 
     def lang
-      YAML.load_file(root_dir + "db/language.yml")
+      @lang ||= YAML.load_file(root_dir + "db/language.yml")
     end
 
 
     def log
+      return @logger unless @logger.nil?
+      puts :a
+
       level = {
         FATAL: Logger::FATAL,
         ERROR: Logger::ERROR,
@@ -33,14 +37,14 @@ module Bot
 
       case $DEBUG
       when true
-        logger = Logger.new(root_dir + "log/" + config[:logfile_debug])
-        logger.level = level[config[:log_level_debug]]
+        @logger = Logger.new(root_dir + "log/" + config[:logfile_debug])
+        @logger.level = level[config[:log_level_debug]]
       else
-        logger = Logger.new(root_dir + "log/" + config[:logfile])
-        logger.level = level[config[:log_level]]
+        @logger = Logger.new(root_dir + "log/" + config[:logfile])
+        @logger.level = level[config[:log_level]]
       end
 
-      logger
+      @logger
 
     end
 
