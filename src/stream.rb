@@ -14,7 +14,7 @@ threads  = []
 statuses = Queue.new
 
 
-account  = $DEBUG ? :shakiin : :tsukuba_gominohi_bot
+account  = $DEBUG ? :dev : :tsukuba_gominohi_bot
 bot = Bot::Bot.new(account, stream: true)
 bot_user = bot.twitter.user.attrs
 
@@ -142,7 +142,7 @@ threads << Thread.fork do
         bot.dm(data[:id], message)
       else
         bot.update(
-          message, id: data[:user][:id], screen_name: data[:user][:screen_name]
+          message, id: data[:id], screen_name: data[:user][:screen_name]
         )
       end
     }
