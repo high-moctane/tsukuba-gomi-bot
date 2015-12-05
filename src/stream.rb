@@ -33,34 +33,28 @@ threads << Thread.fork do |e|
   warn "TL監視準備開始\n"
   begin
     bot.stream.on_inited {
-
       warn "サーバ接続完了\n"
       p.log.info($0) {"on_inited: サーバ接続完了"}
 
     }.on_limit { |skip_count|
-
       warn "on_limit: API規制\n"
       p.log.error($0) {"on_limit: API規制"}
       # todo:
       #   ここでワーカースレッドを停止させるようにしたい？
 
     }.on_direct_message { |direct_message|
-
       statuses.push({status: direct_message, dm?: true})
       p.log.debug($0) {"on_direct_message: #{direct_message.inspect}"}
 
     }.on_error { |message|
-
       warn "on_error: #{message.inspect}\n"
       p.log.error($0) {"on_error: #{message.inspect}"}
 
     }.on_reconnect { |timeout, retries|
-
       warn "on_reconnect: 再接続\n"
       p.log.info($0) {"on_reconnect: #{[timeout.inspect, retries.inspect]}"}
 
     }.userstream { |tweet|
-
       statuses.push({status: tweet, dm?: false})
 
     }
@@ -80,6 +74,7 @@ end
 #
 threads << Thread.fork do
   mes = Bot::Message.new
+  limit_count = {}
 
   loop do
     status = statuses.pop
@@ -112,7 +107,7 @@ threads << Thread.fork do
     # ------------------------------------------------------------
     # elements からtrigger 要素を探す
     #
-    if /^(ごみ|ゴミ|gomi)($|((の|no)(日|ひ|hi)))/i === elements[0]
+    if /^(ごみ|ゴミ|gomi)($|((の|no)(日|ひ|hi))|((出|だ|da)(し|si|shi)))/i === elements[0]
       trigger = true
       elements.delete_at(0)
     end
@@ -121,11 +116,33 @@ threads << Thread.fork do
     # ------------------------------------------------------------
     # ここでアクションの定義をする
     #
+
+    # now はローカル変数
+    # 返事する場合はtrue, しない場合は false を返す
+    limit_counter = ->(now: Time.now) {
+      if limit_count.key?(data[:user][:id])
+        # TODO: 何分間に何回の制限は外部ファイルで設定できるようにする
+        #   暫定的に5分間に20回までとする
+        limit_count[data[:user][:id]].reject! { |i| now - i > 5 * 60 }
+        if limit_count[data[:user][:id]].size > 20
+          p.log.info($0) {"reply_limit: #{status.inspect}"}
+          next false
+        else
+          limit_count[data[:user][:id]] << now
+          true
+        end
+      else
+        limit_count[data[:user][:id]] = [now]
+        true
+      end
+    }
+
+
     post = ->(message) {
+      next unless limit_counter[]
       if status[:dm?]
         bot.dm(data[:id], message)
       else
-        pp "aaaaa"
         bot.update(
           message, id: data[:user][:id], screen_name: data[:user][:screen_name]
         )
@@ -134,9 +151,12 @@ threads << Thread.fork do
 
 
     favorite = -> {
+      next unless limit_counter[]
       bot.twitter.favorite(data[:id])
       p.log.info($0) {"favorite: #{status.inspect}"}
     }
+
+
 
 
     # ------------------------------------------------------------
