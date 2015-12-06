@@ -188,7 +188,7 @@ threads << Thread.fork do
         post[mes.garb_search(:粗大ごみ)]
 
       when /^(びん|瓶|スプレー|bin|supure|splay)/i
-        post[mes.garb_search(:びん)]
+        post[mes.garb_search(:びん・スプレー容器)]
 
       when /^(かん|缶|can|kan)/i
         post[mes.garb_search(:かん)]
