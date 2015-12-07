@@ -57,6 +57,7 @@ module Bot
       @twitter.create_direct_message(user, message)
     rescue => e
       @@P.log.error($0) { @@P.log_message(e) }
+      warn "DM_error: #{@@P.log_message(e)}"
       false
     else
       @@P.log.info($0) { "DM: to: #{user}, message: #{message.inspect}" }

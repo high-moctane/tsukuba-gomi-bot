@@ -43,8 +43,7 @@ threads << Thread.fork do |e|
       #   ここでワーカースレッドを停止させるようにしたい？
 
     }.on_direct_message { |direct_message|
-      # statuses.push({status: direct_message, dm?: true})
-      p.log.debug($0) {"on_direct_message: #{direct_message.inspect}"}
+      statuses.push({status: direct_message, dm?: true})
 
     }.on_error { |message|
       warn "on_error: #{message.inspect}\n"
@@ -85,7 +84,13 @@ threads << Thread.fork do
     # 入らないものも弾いてしまう
     #
     if status[:dm?]
-      # TODO: 後でちゃんとやる
+      data = status[:status].attrs
+      p.log.debug($0) {"on_direct_message: #{status.inspect}"}
+
+      # 自分のには反応しない
+      next if data[:sender][:id] == bot_user[:id]
+
+      elements = data[:text].split(/\s|\p{blank}/)
       trigger = true
     else
       data = status[:status].attrs
@@ -119,19 +124,21 @@ threads << Thread.fork do
 
     # now はローカル変数
     # 返事する場合はtrue, しない場合は false を返す
-    limit_counter = ->(now: Time.now) {
-      if limit_count.key?(data[:user][:id])
-        limit_count[data[:user][:id]].reject! { |i| now - i > p.config[:limit_sec] }
-        if limit_count[data[:user][:id]].size > p.config[:limit_count]
+    limit_counter = ->(id: nil, now: Time.now) {
+      id = status[:dm?] ? data[:sender][:id] : data[:user][:id]
+
+      if limit_count.key?(id)
+        limit_count[id].reject! { |i| now - i > p.config[:limit_sec] }
+        if limit_count[id].size >= p.config[:limit_count]
           p.log.info($0) {"reply_limit: #{status.inspect}"}
           next false
         else
-          limit_count[data[:user][:id]] << now
-          true
+          limit_count[id] << now
+          next true
         end
       else
-        limit_count[data[:user][:id]] = [now]
-        true
+        limit_count[id] = [now]
+        next true
       end
     }
 
@@ -139,7 +146,7 @@ threads << Thread.fork do
     post = ->(message) {
       next unless limit_counter[]
       if status[:dm?]
-        bot.dm(data[:id], message)
+        bot.dm(data[:sender][:id], message)
       else
         bot.update(
           message, id: data[:id], screen_name: data[:user][:screen_name]
@@ -149,9 +156,13 @@ threads << Thread.fork do
 
 
     favorite = -> {
-      next unless limit_counter[]
-      bot.twitter.favorite(data[:id])
-      p.log.info($0) {"favorite: #{status.inspect}"}
+      if status[:dm?]
+        post[mes.garb_regular]
+      else
+        next unless limit_counter[]
+        bot.twitter.favorite(data[:id])
+        p.log.info($0) {"favorite: #{status.inspect}"}
+      end
     }
 
 
