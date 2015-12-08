@@ -54,7 +54,8 @@ module Bot
 
 
     def place_name(dist)
-      @place_name ||= YAML.load_file(root_dir + "db/place_name.yml")[dist]
+      @place_name ||= YAML.load_file(root_dir + "db/place_name.yml")
+      @place_name[dist]
     end
   end
 end
