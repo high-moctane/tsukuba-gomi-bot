@@ -14,7 +14,7 @@ threads  = []
 statuses = Queue.new
 
 
-account  = $DEBUG ? :dev : :tsukuba_gominohi_bot
+account  = $DEBUG ? :shakiin : :tsukuba_gominohi_bot
 bot = Bot::Bot.new(account, stream: true)
 bot_user = bot.twitter.user.attrs
 
@@ -209,6 +209,34 @@ threads << Thread.fork do
 
       when /^(御神籤|(おみ|ごみ|ゴミ)くじ|omikuji|(占|うらな)い|ラッキー|(運勢|うんせい))/i
         post[mes.lucky_item]
+
+      when *(p.place_name(:東地区))
+        if status[:dm?]
+          post[mes.garb_dist(:東地区)]
+        else
+          post["DMのみに対応した機能です(｀･ω･´)"]
+        end
+
+      when *(p.place_name(:西地区))
+        if status[:dm?]
+          post[mes.garb_dist(:西地区)]
+        else
+          post["DMのみに対応した機能です(｀･ω･´)"]
+        end
+
+      when *(p.place_name(:南地区))
+        if status[:dm?]
+          post[mes.garb_dist(:南地区)]
+        else
+          post["DMのみに対応した機能です(｀･ω･´)"]
+        end
+
+      when *(p.place_name(:北地区))
+        if status[:dm?]
+          post[mes.garb_dist(:北地区)]
+        else
+          post["DMのみに対応した機能です(｀･ω･´)"]
+        end
 
       else
         post[mes.garb_regular]
