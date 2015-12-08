@@ -14,7 +14,7 @@ threads  = []
 statuses = Queue.new
 
 
-account  = $DEBUG ? :shakiin : :tsukuba_gominohi_bot
+account  = $DEBUG ? :dev : :tsukuba_gominohi_bot
 bot = Bot::Bot.new(account, stream: true)
 bot_user = bot.twitter.user.attrs
 
