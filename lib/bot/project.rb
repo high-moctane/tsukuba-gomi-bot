@@ -51,6 +51,11 @@ module Bot
     def log_message(e)
       "#{e.backtrace.inspect} #{e.message}"
     end
+
+
+    def place_name(dist)
+      @place_name ||= YAML.load_file(root_dir + "db/place_name.yml")[dist]
+    end
   end
 end
 
@@ -68,6 +73,7 @@ if $0 == __FILE__
   pp obj.config
   pp obj.lang
   pp obj.log
+  pp obj.place_name(:北地区)
 
   begin
     raise

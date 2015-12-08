@@ -36,18 +36,31 @@ module Bot
 
 
     # 普通のツイート
-    def update(string, id: nil, screen_name: "")
-      self.class.format_message(string, screen_name: screen_name).each do |str|
-        obj = @twitter.update(str, {in_reply_to_status_id: id})
+    def update(string, id: nil, screen_name: "", try: 3, footer: "")
+      self.class.format_message(string, screen_name: screen_name, footer: footer).each do |str|
+        obj = @twitter.update!(str, {in_reply_to_status_id: id})
         id = obj.id
 
         @@P.log.info($0) {"post: #{str.inspect}"}
         warn "post:\n" + str + "\n"
       end
-      true
+
+    rescue Twitter::Error::DuplicateStatus => e
+      @@P.log.error($0) { "post_error: DuplicateStatus: #{string}" }
+        warn "duplicate:\n" + string + "\n"
+      if try > 1
+        warn "post_retry: #{string}\n"
+        update(string, id: id, screen_name: screen_name, try: try - 1, footer: self.class.random_footer)
+      end
+      false
+
     rescue => e
       @@P.log.error($0) {@@P.log_message(e)}
       false
+
+    else
+      true
+
     end
 
 
@@ -175,9 +188,9 @@ module Bot
 
       # 140以内に適当に分割する
       # Note: 改行で優先的にきっている
-      def format_message(message, screen_name: "")
+      def format_message(message, screen_name: "", footer: "")
         screen_name = "@" + screen_name + "\n" unless screen_name == ""
-        footer = " " + [*0..9].sample(3).join
+        footer = " " + footer unless footer == ""
         main_size = 140 - screen_name.size - footer.size
         ans = [""]
         i = 0
@@ -190,8 +203,13 @@ module Bot
         end
         ans.map {|str| screen_name + str.chomp.chomp + footer}
       end
-    end
 
+
+
+      def random_footer
+        [*0..9].sample(3).join
+      end
+    end
 
 
   rescue => e
