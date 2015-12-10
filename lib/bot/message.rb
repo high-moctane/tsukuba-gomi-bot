@@ -74,6 +74,34 @@ module Bot
 
 
 
+    # 粗大ごみのお知らせ
+    def reservation_day_oversized(dist = [:北地区, :西地区, :東地区, :南地区])
+      data = @garb.reservation_day_oversized(dist: dist)
+      mes = ""
+      return "" if data.reject { |_, v| v == nil }.empty?
+      internet = []
+      tel = []
+
+      data.each do |k, v|
+        case v
+        when :Internet then internet << k
+        when :Tel      then tel << k
+        else #NOP
+        end
+      end
+
+      unless internet.empty?
+        mes << "#{internet.join("、")}の粗大ごみインターネット予約は今日までです#{shakiin}\n"
+      end
+      unless tel.empty?
+        mes << "#{tel.join("、")}の粗大ごみの電話予約は今日の17:15までです#{shakiin}\n"
+      end
+
+      mes
+    end
+
+
+
     # ごみくじ
     def lucky_item
       item_list = []
@@ -131,5 +159,6 @@ if $0 == __FILE__
   puts obj.garb_search(:ペットボトル)
   puts obj.lucky_item
   puts obj.shakiin
+  puts obj.reservation_day_oversized
 end
 
