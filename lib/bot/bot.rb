@@ -37,6 +37,7 @@ module Bot
 
     # 普通のツイート
     def update(string, id: nil, screen_name: "", try: 3, footer: "")
+      footer = self.class.random_footer
       self.class.format_message(string, screen_name: screen_name, footer: footer).each do |str|
         obj = @twitter.update!(str, {in_reply_to_status_id: id})
         id = obj.id
@@ -67,6 +68,7 @@ module Bot
 
     # DM
     def dm(user, message)
+      message += " #{self.class.random_footer}"
       @twitter.create_direct_message(user, message)
     rescue => e
       @@P.log.error($0) { @@P.log_message(e) }
