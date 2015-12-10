@@ -86,6 +86,23 @@ module Bot
     end
 
 
+    def reservation_day_oversized(dist: @@dist, shift: 0)
+      dist = [dist].flatten
+      date = @date + shift
+      ans  = {}
+
+      dist.each do |k|
+        ans[k] =
+          case :粗大ごみ
+          when @data[k][date + @@P.config[:og_Tel]]      then :Tel
+          when @data[k][date + @@P.config[:og_Internet]] then :Internet
+          else nil
+          end
+      end
+      ans
+    end
+
+
     private
 
     # yamlからデータを取り込んで返す
@@ -123,11 +140,12 @@ if $0 == __FILE__
   include Bot
   require "date"
   require_relative "../extend_date"
-  obj = Bot::Garbage.new(Date.today + 2)
+  obj = Bot::Garbage.new(Date.today)
   # obj = Bot::Garbage.new(Date.today, lang: :en)
   pp obj.data[:北地区][0]
   pp obj.day
-  pp obj.week(:北地区)
+  pp obj.week(:東地区)
   pp obj.next_collect(:ペットボトル, shift: 5)
   pp obj.any_collect?
+  pp obj.reservation_day_oversized
 end

@@ -22,7 +22,7 @@ warn "#{$0} 起動"
 
 mes_obj = Bot::Message.new
 
-message = mes_obj.garb_regular
+message = mes_obj.garb_regular + mes_obj.garb_og_day
 
 Bot::Bot.new(account).update(message)
 

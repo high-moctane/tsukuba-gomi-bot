@@ -13,8 +13,13 @@
 :log_level:       :INFO
 :log_level_debug: :DEBUG
 
-:limit_sec:       90.0
+:limit_sec:       60.0
 :limit_count:     10
+
+
+# 粗大ごみの設定(oversized garbage)
+:og_Internet: 5
+:og_Tel:      2
 
 # ----------------------------------------------------------------------
 # ゴミくじの出るもの
