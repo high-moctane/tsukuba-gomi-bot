@@ -175,16 +175,16 @@ threads << Thread.fork do
     when true
       case elements[0]
       when /^(東|ひがし|ヒガシ|higasi|higashi)/i
-        post[mes.garb_dist(:東地区)]
+        post[mes.garb_dist(:東地区) + mes.garb_og_day(:東地区)]
 
       when /^(西|にし|ニシ|nisi|nishi)/i
-        post[mes.garb_dist(:西地区)]
+        post[mes.garb_dist(:西地区) + mes.garb_og_day(:西地区)]
 
       when /^(南|みなみ|ミナミ|minami)/i
-        post[mes.garb_dist(:南地区)]
+        post[mes.garb_dist(:南地区) + mes.garb_og_day(:南地区)]
 
       when /^(北|きた|kita)/i
-        post[mes.garb_dist(:北地区)]
+        post[mes.garb_dist(:北地区) + mes.garb_og_day(:北地区)]
 
       when /^(燃|萌|も|mo)(やせ|え|yase|e)(る|ru)/i
         post[mes.garb_search(:燃やせるごみ)]
@@ -196,7 +196,7 @@ threads << Thread.fork do
         post[mes.garb_search(:ペットボトル)]
 
       when /^(粗大|そだい|sodai)/i
-        post[mes.garb_search(:粗大ごみ)]
+        post[mes.garb_search(:粗大ごみ) + mes.garb_og_day]
 
       when /^(びん|瓶|スプレー|bin|supure|splay)/i
         post[mes.garb_search(:びん・スプレー容器)]
@@ -212,28 +212,28 @@ threads << Thread.fork do
 
       when *(p.place_name(:東地区))
         if status[:dm?]
-          post[mes.garb_dist(:東地区)]
+          post[mes.garb_dist(:東地区) + mes.garb_og_day(:東地区)]
         else
           post["DMのみに対応した機能です(｀･ω･´)"]
         end
 
       when *(p.place_name(:西地区))
         if status[:dm?]
-          post[mes.garb_dist(:西地区)]
+          post[mes.garb_dist(:西地区) + mes.garb_og_day(:西地区)]
         else
           post["DMのみに対応した機能です(｀･ω･´)"]
         end
 
       when *(p.place_name(:南地区))
         if status[:dm?]
-          post[mes.garb_dist(:南地区)]
+          post[mes.garb_dist(:南地区) + mes.garb_og_day(:南地区)]
         else
           post["DMのみに対応した機能です(｀･ω･´)"]
         end
 
       when *(p.place_name(:北地区))
         if status[:dm?]
-          post[mes.garb_dist(:北地区)]
+          post[mes.garb_dist(:北地区) + mes.garb_og_day(:北地区)]
         else
           post["DMのみに対応した機能です(｀･ω･´)"]
         end

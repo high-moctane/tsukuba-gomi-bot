@@ -75,7 +75,8 @@ module Bot
 
 
     # 粗大ごみのお知らせ
-    def reservation_day_oversized(dist = [:北地区, :西地区, :東地区, :南地区])
+    def garb_og_day(dist = [:北地区, :西地区, :東地区, :南地区])
+      dist = [dist].flatten
       data = @garb.reservation_day_oversized(dist: dist)
       mes = ""
       return "" if data.reject { |_, v| v == nil }.empty?
@@ -159,6 +160,6 @@ if $0 == __FILE__
   puts obj.garb_search(:ペットボトル)
   puts obj.lucky_item
   puts obj.shakiin
-  puts obj.reservation_day_oversized
+  puts obj.garb_og_day
 end
 
