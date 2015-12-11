@@ -1,5 +1,7 @@
 ---
 :account: :tsukuba_gomi_bot
+:admin_screen_name:
+    - "high_moctane"
 :debug_account: :dev
 :logfile: tsukuba_gomi_bot.log
 :logfile_debug: tsukuba_gomi_bot_debug.log
