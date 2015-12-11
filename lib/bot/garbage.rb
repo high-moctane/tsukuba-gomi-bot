@@ -11,6 +11,7 @@ require_relative "project"
 
 
 module Bot
+  # TODO: 全体的に hash を使うように変更しよう(｀･ω･´)
   include Project
 
   # Garbege クラス
@@ -103,6 +104,25 @@ module Bot
     end
 
 
+    def particular_day(str, dist: @@dist)
+      dist = [dist].flatten
+      return nil if (p_day = Date.parse(str.gsub(/年|ねん|月|がつ/, "/")) rescue nil).nil?
+      p_day = p_day >> 12 if p_day < @date
+      next_month = Date.new((@date >> 1).year, (@date >> 1).month , -1)
+      if next_month >= p_day
+        day(dist: dist, shift: p_day - @date)
+        {
+          date: p_day,
+          data: day(dist: dist, shift: p_day - @date)
+        }
+      else
+        {date: p_day, data: nil}
+      end
+    rescue => e
+      @@P.log.error($0) { @@P.log_message(e) }
+    end
+
+
     private
 
     # yamlからデータを取り込んで返す
@@ -148,4 +168,5 @@ if $0 == __FILE__
   pp obj.next_collect(:ペットボトル, shift: 5)
   pp obj.any_collect?
   pp obj.reservation_day_oversized
+  pp obj.particular_day("12月24日")
 end
