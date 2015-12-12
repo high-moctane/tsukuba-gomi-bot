@@ -5,6 +5,7 @@ require "yaml"
 require "pp"
 
 require_relative "project"
+require_relative "../extend_date"
 
 
 
@@ -110,7 +111,7 @@ module Bot
 
     def particular_day(str, dist: @@dist)
       dist = [dist].flatten
-      return nil if (p_day = Date.parse(str.gsub(/年|ねん|月|がつ/, "/")) rescue nil).nil?
+      return nil if (p_day = Date.parse_lang(str, :ja) rescue nil).nil?
       p_day = p_day >> 12 if p_day < @date
       next_month = Date.new((@date >> 1).year, (@date >> 1).month , -1)
       if next_month >= p_day

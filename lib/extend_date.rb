@@ -24,7 +24,24 @@ module Extend_Date
       to_s
     end
   end
+
+
+
 end
+
+class Date
+  class << self
+    def parse_lang(str, lang)
+      case lang
+      when :ja
+        self.parse(str.tr("０-９", "0-9").gsub(/年|月|ねん|がつ/, "/"))
+      else
+        self.parse(str)
+      end
+    end
+  end
+end
+
 
 
 Date.send(:prepend, Extend_Date)
@@ -37,5 +54,6 @@ if $0 == __FILE__
   p today.to_s
   p today.to_lang(:ja)
   p today.to_lang(:en)
+  p Date.parse_lang("１２月３１日", :ja)
 end
 

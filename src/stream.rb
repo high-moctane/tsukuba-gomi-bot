@@ -175,8 +175,7 @@ begin
     case trigger
     when true
       # 管理者コマンド
-      case data[:sender][:screen_name]
-      when *(p.config[:admin_screen_name])
+      if status[:dm?] && p.config[:admin_screen_name].include?(data[:sender][:screen_name])
         case elements[0]
         when "kill"
           post["kill されます(´･ω･｀)"]
@@ -185,6 +184,7 @@ begin
           exit
         end
       end
+
 
       # 通常のもの
       case elements[0]
@@ -255,9 +255,18 @@ begin
       when /^((日|ひ)(付|づ))/
         post.(mes.garb_particular_day(elements[1]))
 
+      when /^(今日|きょう)/
+        post.(mes.garb_particular_day(Date.today.to_s))
+
+      when /^(明日|あした)/
+        post.(mes.garb_particular_day((Date.today + 1).to_s))
+
+      when /^(明後日|あさって)/
+        post.(mes.garb_particular_day((Date.today + 2).to_s))
 
       else
-        if (Date.parse(elements[0].gsub(/年|ねん|月|がつ/, "/")) rescue nil).nil?.!
+        # 日付っぽいのは変換を試みて、うまくいったら日付検索機能を発動
+        if (Date.parse_lang(elements[0], :ja) rescue nil).nil?.!
           post.(mes.garb_particular_day(elements[0]))
 
         else
@@ -269,7 +278,8 @@ begin
       # 全文検索
       case data[:text]
       when /(起|お)き|むくり|おは/i
-        post[mes.garb_regular] if DateTime.now.hour.between?(4, 10)
+        tmp = "\n（これはごみ出し忘れ機能です(｀･ω･´)）"
+        post[mes.garb_regular + tmp] if DateTime.now.hour.between?(4, 10)
 
       when /^((ごみ|ゴミ)くじ|gomikuji)/i
         post[mes.lucky_item]
