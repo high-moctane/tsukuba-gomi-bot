@@ -17,13 +17,13 @@ gomi_bot   = Bot::Bot.new(:tsukuba_gominohi_bot)
 config_dir = p.root_dir + "config/friendship.yml"
 config     = YAML.load_file(config_dir)
 
-pp follower_ids         = gomi_bot.follower_ids
-pp friend_ids           = gomi_bot.friend_ids
-pp friendships_outgoing = gomi_bot.friendships_outgoing
+follower_ids         = gomi_bot.follower_ids
+friend_ids           = gomi_bot.friend_ids
+friendships_outgoing = gomi_bot.friendships_outgoing
 
-pp new_follow   = (follower_ids | config[:follow]) - friend_ids \
+new_follow   = (follower_ids | config[:follow]) - friend_ids \
   - friendships_outgoing - config[:unfollow] - config[:skip_follow]
-pp new_unfollow = (friend_ids | config[:unfollow]) - follower_ids \
+new_unfollow = (friend_ids | config[:unfollow]) - follower_ids \
   - friendships_outgoing - config[:follow] - config[:skip_unfollow]
 
 
