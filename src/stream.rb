@@ -275,10 +275,12 @@ begin
           tmp_conf[:no_auto_fav].reject! { |i| i == tmp_id }
           p.user_config(tmp_conf)
           post.("自動ふぁぼをオンにしました(｀･ω･´)")
+          p.log.info($0) { "#{tmp_id}: 自動ふぁぼオン" }
         when /off|オフ|おふ|解除|しない/i
           tmp_conf[:no_auto_fav] << tmp_id
           p.user_config(tmp_conf)
           post.("自動ふぁぼをオフにしました(｀･ω･´)")
+          p.log.info($0) { "#{tmp_id}: 自動ふぁぼオフ" }
         else
           post.("オン か オフ で設定できます(｀･ω･´)")
         end
@@ -291,10 +293,12 @@ begin
           tmp_conf[:morning_reminder].reject! { |i| i == tmp_id }
           p.user_config(tmp_conf)
           post.("リマインダー機能をオンにしました(｀･ω･´)")
+          p.log.info($0) { "#{tmp_id}: リマインダーオン" }
         when /off|オフ|おふ|解除|しない/i
           tmp_conf[:morning_reminder] << tmp_id
           p.user_config(tmp_conf)
           post.("リマインダー機能をオフにしました(｀･ω･´)")
+          p.log.info($0) { "#{tmp_id}: リマインダーオフ" }
         else
           post.("オン か オフ で設定できます(｀･ω･´)")
         end
