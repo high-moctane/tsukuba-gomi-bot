@@ -36,9 +36,9 @@ module Bot
     def day(dist: @@dist, shift: 0)
       dist = [dist].flatten
       date = @date + shift
-      ans = []
+      ans = {}
       dist.each do |k|
-        ans << [k, @data[k][date]]
+        ans[k] = @data[k][date]
       end
       ans
     end
@@ -46,12 +46,16 @@ module Bot
 
     # 7日分の情報を配列で出す
     # Todo: そのうち書く
-    def week(dist, shift: 0)
-      ans = []
+    def week(dist: @@dist, shift: 0)
+      dist = [dist].flatten
+      ans = {}
       date = @date + shift
 
-      (0..6).each do |i|
-        ans << [date + i, @data[dist][date + i]]
+      dist.each do |k|
+        ans[k] = {}
+        (0..6).each do |i|
+          ans[k][date + i] = @data[k][date + i]
+        end
       end
 
       ans
@@ -60,12 +64,12 @@ module Bot
 
     def next_collect(garb, dist = @@dist, shift: 0)
       dist = [dist].flatten
-      ans = []
+      ans = {}
 
       dist.each do |k|
         (0..30).each do |i|
           if garb == @data[k][date + shift + i]
-            ans << [k, @date + shift + i, shift + i]
+            ans[k] = {date: @date + shift + i, offset: shift + i}
             break
           end
         end
@@ -164,7 +168,8 @@ if $0 == __FILE__
   # obj = Bot::Garbage.new(Date.today, lang: :en)
   pp obj.data[:北地区][0]
   pp obj.day
-  pp obj.week(:東地区)
+  pp obj.week
+  # pp obj.week(:東地区)
   pp obj.next_collect(:ペットボトル, shift: 5)
   pp obj.any_collect?
   pp obj.reservation_day_oversized

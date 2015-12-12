@@ -70,9 +70,7 @@ end
 # ----------------------------------------------------------------------
 # 新しいストリームの実装
 #
-# TODO: これは別にスレッドでなくていいのでは(｀･ω･´)
-#
-threads << Thread.fork do
+begin
   mes = Bot::Message.new
   limit_count = {}
 
@@ -127,6 +125,8 @@ threads << Thread.fork do
     # 返事する場合はtrue, しない場合は false を返す
     limit_counter = ->(id: nil, now: Time.now) {
       id = status[:dm?] ? data[:sender][:id] : data[:user][:id]
+      screen_name = status[:dm?] ? data[:sender][:screen_name] : data[:user][:screen_name]
+      next true if screen_name == p.config[:admin_screen_name]
 
       if limit_count.key?(id)
         limit_count[id].reject! { |i| now - i > p.config[:limit_sec] }
@@ -252,9 +252,18 @@ threads << Thread.fork do
           post["DMのみに対応した機能です(｀･ω･´)"]
         end
 
-      else
-        post[mes.garb_regular]
+      when /^((日|ひ)(付|づ))/
+        post.(mes.garb_particular_day(elements[1]))
 
+
+      else
+        if (Date.parse(elements[0].gsub(/年|ねん|月|がつ/, "/")) rescue nil).nil?.!
+          post.(mes.garb_particular_day(elements[0]))
+
+        else
+          post[mes.garb_regular]
+
+        end
       end
     else
       # 全文検索
@@ -277,25 +286,23 @@ threads << Thread.fork do
       when /I-\('-ω-be\) をしながら/
         favorite[]
 
+      when /🔥🔥🔥\n🔥🐧🔥\n🔥🔥🔥\n/
+        favorite[]
+
       else
         # NOP
 
       end
     end
   end
+rescue => e
+  p.log.error($0) { p.log_message(e) }
+  warn "error: #{e.message}"
+  retry
 end
 
 
 
-
-
-
-
-
-
-p.log.info($0) { "スレッド起動完了" }
-
-
-# これがないとすぐにプログラムが終了する
+# これがなくても困らないが、念のため
 threads.map(&:join)
 
