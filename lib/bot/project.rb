@@ -14,11 +14,23 @@ module Bot
     def config(new_config = nil)
       dir = root_dir + "config/config.yml"
       if new_config.nil?
-        @config ||= YAML.load_file(root_dir + "config/config.yml")
+        @config ||= YAML.load_file(dir)
       else
         @config.merge!(new_config)
         File.open(dir, "w") { |f| YAML.dump(@config, f) }
         @config
+      end
+    end
+
+
+    def user_config(new_config = nil)
+      dir = root_dir + "config/user_config.yml"
+      if new_config.nil?
+        @user_config ||= YAML.load_file(dir)
+      else
+        @user_config.merge!(new_config)
+        File.open(dir, "w") { |f| YAML.dump(@user_config, f) }
+        @user_config
       end
     end
 
@@ -88,6 +100,7 @@ if $0 == __FILE__
   pp obj.lang
   pp obj.log
   pp obj.place_name(:北地区)
+  pp obj.user_config
 
   begin
     raise
