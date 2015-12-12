@@ -67,9 +67,10 @@ end
 
 
 
-
 # ----------------------------------------------------------------------
 # 新しいストリームの実装
+#
+# TODO: これは別にスレッドでなくていいのでは(｀･ω･´)
 #
 threads << Thread.fork do
   mes = Bot::Message.new
@@ -173,6 +174,19 @@ threads << Thread.fork do
     #
     case trigger
     when true
+      # 管理者コマンド
+      case data[:sender][:screen_name]
+      when *(p.config[:admin_screen_name])
+        case elements[0]
+        when "kill"
+          post["kill されます(´･ω･｀)"]
+          warn "killed by admin\n"
+          p.log.warn($0) {"killed by admin"}
+          exit
+        end
+      end
+
+      # 通常のもの
       case elements[0]
       when /^(東|ひがし|ヒガシ|higasi|higashi)/i
         post[mes.garb_dist(:東地区) + mes.garb_og_day(:東地区)]

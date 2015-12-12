@@ -47,7 +47,7 @@ module Bot
       end
 
     rescue Twitter::Error::DuplicateStatus => e
-      @@P.log.error($0) { "post_error: DuplicateStatus: #{string}" }
+      @@P.log.error($0) { "post_error: DuplicateStatus: #{string.inspect}" }
         warn "duplicate:\n" + string + "\n"
       if try > 1
         warn "post_retry: #{string}\n"
@@ -67,7 +67,9 @@ module Bot
 
 
     # DM
+    # TODO: フッターに関することを綺麗にまとめたい(｀･ω･´)
     def dm(user, message)
+      message.chomp!
       message += " #{self.class.random_footer}"
       @twitter.create_direct_message(user, message)
     rescue => e

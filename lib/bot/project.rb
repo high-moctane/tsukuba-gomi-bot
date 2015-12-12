@@ -11,8 +11,15 @@ module Bot
     end
 
 
-    def config
-      @config ||= YAML.load_file(root_dir + "config/config.yml")
+    def config(new_config = nil)
+      dir = root_dir + "config/config.yml"
+      if new_config.nil?
+        @config ||= YAML.load_file(root_dir + "config/config.yml")
+      else
+        @config.merge!(new_config)
+        File.open(dir, "w") { |f| YAML.dump(@config, f) }
+        @config
+      end
     end
 
 
@@ -36,10 +43,16 @@ module Bot
 
       case $DEBUG
       when true
-        @logger = Logger.new(root_dir + "log/" + config[:logfile_debug])
+        @logger = Logger.new(
+          root_dir + "log/" + config[:logfile_debug],
+          config[:log_freq]
+        )
         @logger.level = level[config[:log_level_debug]]
       else
-        @logger = Logger.new(root_dir + "log/" + config[:logfile])
+        @logger = Logger.new(
+          root_dir + "log/" + config[:logfile],
+          config[:log_freq]
+        )
         @logger.level = level[config[:log_level]]
       end
 
