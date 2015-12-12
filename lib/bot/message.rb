@@ -30,32 +30,37 @@ module Bot
     # よくある一般的なツイート
     def garb_regular
       garb_update
+      mes = ""
+      mes << %w(今日 明日)[@garb_shift]
+      mes << (@now + @garb_shift).to_lang(:ja)
 
       if @garb.any_collect?(shift: @garb_shift)
-        <<-"EOS"
-#{%w(今日 明日)[@garb_shift]} #{(@now + @garb_shift).to_lang(:ja)}
-#{@garb.day(shift: @garb_shift).map { |a| a * ": " } * "\n"}
-です#{shakiin}
-        EOS
+        mes << "\n"
+        @garb.day(shift: @garb_shift).each { |k, v|
+          mes << "#{k}: #{v}\n"
+        }
+        mes << "です#{shakiin}"
       else
-        <<-"EOS"
-#{%w(今日 明日)[@garb_shift]} #{(@now + @garb_shift).to_lang(:ja)} の収集はありません#{shakiin}
-        EOS
+        mes << "の収集はありません#{shakiin}"
       end
-
+      mes
     end
 
 
 
     # 地区ごとの返事
-    def garb_dist(dist)
+    def garb_dist(dist = [:北地区, :西地区, :東地区, :南地区])
       garb_update
+      mes = ""
+      @garb.week(dist: dist, shift: @garb_shift).each do |k, v|
+        mes << "#{k}のごみは\n#{%w(今日 明日)[@garb_shift]}"
+        v.each do |k1, v1|
+          mes << "#{k1.to_lang(:ja)}: #{v1}\n"
+        end
+        mes << "です#{shakiin}\n"
+      end
 
-      <<-"EOS"
-#{dist}のごみは
-#{%w(今日 明日)[@garb_shift]} #{@garb.week(dist, shift: @garb_shift).map { |a| "#{a[0].to_lang(:ja)}: #{a[1]}" } * "\n"}
-です#{shakiin}
-      EOS
+      mes
     end
 
 
@@ -63,19 +68,18 @@ module Bot
     # 次のごみ検索
     def garb_search(category)
       garb_update
-
-      <<-"EOS"
-次の#{category}の回収日は、今日を含め#{%w(る ない)[@garb_shift]}と
-#{@garb.next_collect(category, shift: @garb_shift)
-.map { |a| "#{a[0]}: #{a[1].to_lang(:ja)} (#{"%d" % a[2]}日後)" } * "\n"}
-です#{shakiin}
-      EOS
+      mes = "次の#{category}の回収日は、今日を含め#{%w(る ない)[@garb_shift]}と\n"
+      @garb.next_collect(category, shift: @garb_shift).each do |k, v|
+        mes << "#{k}: #{v[:date].to_lang(:ja)}（#{"%d" % v[:offset]}日後）\n"
+      end
+      mes << "です#{shakiin}"
     end
 
 
 
     # 粗大ごみのお知らせ
     def garb_og_day(dist = [:北地区, :西地区, :東地区, :南地区])
+      garb_update
       dist = [dist].flatten
       data = @garb.reservation_day_oversized(dist: dist)
       mes = ""
@@ -99,6 +103,26 @@ module Bot
       end
 
       mes
+    end
+
+
+
+    # 日付検索
+    def garb_particular_day(str)
+      garb_update
+      mes = ""
+      data = @garb.particular_day(str)
+      if data.nil?
+        mes << "無効な日付です(´; ω ;｀)"
+      elsif data[:data].nil?
+        mes << "#{(@garb.date >> 1).month}月までしか対応してません(´; ω ;｀)"
+      else
+        mes << "#{data[:date].to_lang(:ja)}は\n"
+        data[:data].each do |k, v|
+          mes << "#{k}: #{v}\n"
+        end
+        mes << "です#{shakiin}"
+      end
     end
 
 
@@ -161,5 +185,6 @@ if $0 == __FILE__
   puts obj.lucky_item
   puts obj.shakiin
   puts obj.garb_og_day
+  puts obj.garb_particular_day("1/3")
 end
 
