@@ -39,9 +39,9 @@ module Bot
         @garb.day(shift: @garb_shift).each { |k, v|
           mes << "#{k}: #{v}\n"
         }
-        mes << "です#{shakiin}"
+        mes << "です#{shakiin}\n"
       else
-        mes << "の収集はありません#{shakiin}"
+        mes << "の収集はありません#{shakiin}\n"
       end
       mes
     end
@@ -53,7 +53,7 @@ module Bot
       garb_update
       mes = ""
       @garb.week(dist: dist, shift: @garb_shift).each do |k, v|
-        mes << "#{k}のごみは\n#{%w(今日 明日)[@garb_shift]}"
+        mes << "#{k}のごみは\n#{%w(今日 明日)[@garb_shift]} "
         v.each do |k1, v1|
           mes << "#{k1.to_lang(:ja)}: #{v1}\n"
         end
@@ -72,7 +72,7 @@ module Bot
       @garb.next_collect(category, shift: @garb_shift).each do |k, v|
         mes << "#{k}: #{v[:date].to_lang(:ja)}（#{"%d" % v[:offset]}日後）\n"
       end
-      mes << "です#{shakiin}"
+      mes << "です#{shakiin}\n"
     end
 
 
@@ -113,15 +113,15 @@ module Bot
       mes = ""
       data = @garb.particular_day(str)
       if data.nil?
-        mes << "無効な日付です(´; ω ;｀)"
+        mes << "無効な日付です(´; ω ;｀)\n"
       elsif data[:data].nil?
-        mes << "#{(@garb.date >> 1).month}月までしか対応してません(´; ω ;｀)"
+        mes << "#{(@garb.date >> 1).month}月までしか対応してません(´; ω ;｀)\n"
       else
         mes << "#{data[:date].to_lang(:ja)}は\n"
         data[:data].each do |k, v|
           mes << "#{k}: #{v}\n"
         end
-        mes << "です#{shakiin}"
+        mes << "です#{shakiin}\n"
       end
     end
 
