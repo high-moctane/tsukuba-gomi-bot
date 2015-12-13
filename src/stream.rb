@@ -324,7 +324,6 @@ begin
 
           post.(mes.garb_regular + tmp)
         end
-        post[mes.garb_regular + tmp] if DateTime.now.hour.between?(4, 10)
 
       when /^((ごみ|ゴミ)くじ|gomikuji)/i
         post[mes.lucky_item]
