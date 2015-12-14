@@ -290,12 +290,12 @@ begin
         tmp_id = status[:dm?] ? data[:sender][:id] : data[:user][:id]
         case elements[1]
         when /on|オン|おん|設定|する/i
-          tmp_conf[:morning_reminder].reject! { |i| i == tmp_id }
+          tmp_conf[:morning_reminder] << tmp_id
           p.user_config(tmp_conf)
           post.("リマインダー機能をオンにしました(｀･ω･´)")
           p.log.info($0) { "#{tmp_id}: リマインダーオン" }
         when /off|オフ|おふ|解除|しない/i
-          tmp_conf[:morning_reminder] << tmp_id
+          tmp_conf[:morning_reminder].reject! { |i| i == tmp_id }
           p.user_config(tmp_conf)
           post.("リマインダー機能をオフにしました(｀･ω･´)")
           p.log.info($0) { "#{tmp_id}: リマインダーオフ" }
