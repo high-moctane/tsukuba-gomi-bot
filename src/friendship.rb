@@ -39,7 +39,8 @@ new_follow.sample(10).each do |id|
   if data[:lang] == "ja" \
     && data[:screen_name] !~ /[^r][^o]bot/i \
     && data[:name] !~ /bot|[^ロ]ボット|[^ろ]ぼっと/i \
-    && data[:description] !~ /bot|[^ロ]ボット|[^ろ]ぼっと/i
+    && data[:description] !~ /bot|[^ロ]ボット|[^ろ]ぼっと/i \
+    && data[:favourites_count] > 0
 
     gomi_bot.follow(id)
   else
@@ -59,9 +60,11 @@ end
 # ----------------------------------------------------------------------
 # リムーブ
 #
-new_unfollow.sample(10).each do |id|
-  gomi_bot.unfollow(id)
-end
+# NOTE: 一時停止中
+
+# new_unfollow.sample(10).each do |id|
+  # gomi_bot.unfollow(id)
+# end
 
 
 
