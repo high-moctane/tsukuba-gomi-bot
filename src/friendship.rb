@@ -26,6 +26,12 @@ new_follow   = (follower_ids | config[:follow]) - friend_ids \
 new_unfollow = (friend_ids | config[:unfollow]) - follower_ids \
   - friendships_outgoing - config[:follow] - config[:skip_unfollow]
 
+p.log.info($0) { "follower_ids: " + follower_ids.inspect }
+p.log.info($0) { "friend_ids: " + friend_ids.inspect }
+p.log.info($0) { "friendships_outgoing: " + friendships_outgoing.inspect }
+p.log.info($0) { "new_follow: " + new_follow.inspect }
+p.log.info($0) { "new_unfollow: " + new_unfollow.inspect }
+
 
 # ----------------------------------------------------------------------
 # フォロー
