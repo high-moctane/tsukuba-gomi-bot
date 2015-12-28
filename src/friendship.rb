@@ -32,6 +32,9 @@ new_unfollow = (friend_ids | config[:unfollow]) - follower_ids \
 #
 new_follow.sample(10).each do |id|
   data = gomi_bot.twitter.user(id).attrs
+  config[:skip_follow] << id
+  p.log.info($0) { "#{id} を :skip_follow に追加" }
+  puts "#{$0}: #{id} を :skip_follow に追加"
 
   # NOTE:
   #   当面は日本のアカウントのみフォロー
@@ -43,16 +46,6 @@ new_follow.sample(10).each do |id|
     && data[:favourites_count] > 0
 
     gomi_bot.follow(id)
-  else
-    # botっぽかったりするのは自動フォローの対象外
-    config[:skip_follow] << id
-  end
-
-  # 鍵垢の人は次から自動フォローの対象外
-  if data[:protected]
-    config[:skip_follow] << id
-    p.log.info($0) { "#{id} を :skip_follow に追加" }
-    puts "#{$0}: #{id} を :skip_follow に追加"
   end
 end
 
