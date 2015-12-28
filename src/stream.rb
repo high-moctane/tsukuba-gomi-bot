@@ -334,13 +334,19 @@ begin
       when /(\(|（)(´|').ω.(｀|`)\)/
         favorite[]
 
-      when /ぽわ/
+      when /ぽわ|わぽ|ポワ/
         favorite[]
 
       when /I-\('-ω-be\) をしながら/
         favorite[]
 
       when /🔥🔥🔥\n🔥🐧🔥\n🔥🔥🔥/
+        favorite[]
+
+      when /🍆/
+        favorite[]
+
+      when /めう/
         favorite[]
 
       else
