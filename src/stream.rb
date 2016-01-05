@@ -334,7 +334,7 @@ begin
       when /(\(|（)(´|').ω.(｀|`)\)/
         favorite[]
 
-      when /ぽわ|わぽ|ポワ/
+      when /ぽわ/
         favorite[]
 
       when /I-\('-ω-be\) をしながら/
