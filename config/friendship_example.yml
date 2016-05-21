@@ -1,5 +1,4 @@
 ---
-:follow:        []
-:skip_follow:   []
-:unfollow:      []
-:skip_unfollow: []
+:whitelist: []
+:blacklist: []
+:skip_following: []

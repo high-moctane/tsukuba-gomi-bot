@@ -1,0 +1,69 @@
+#! /bin/sh
+exec ruby -S -x "$0" "$@"
+#! ruby
+
+# TODO: 気が向いたら綺麗に書く
+
+require "date"
+require "pp"
+require "yaml"
+
+CAL_DIR = File.expand_path("../../db/calendar", __FILE__) + "/"
+DISTRICTS = [:北地区, :西地区, :東地区, :南地区]
+GARBAGES = [
+  :収集なし,
+  :燃やせるごみ,
+  :燃やせないごみ,
+  :かん,
+  :粗大ごみ,
+  :古紙・古布,
+  :ペットボトル,
+  :びん・スプレー容器,
+]
+
+def days(year, month)
+  day_list = []
+  day_list << day = Date.new(year, month, 1)
+  while day.next.month == month
+    day = day.next
+    day_list << day
+  end
+  day_list
+end
+
+def merge_hash(hash1, hash2)
+  hash1.merge(hash2) { |_, v1, v2| merge_hash(v1, v2) }
+end
+
+# --------------------------------------------------------------------------------
+# main
+
+puts "year month"
+print "> "
+year, month = gets.split.map(&:to_i)
+
+data_list = DISTRICTS.product(days(year, month))
+data = []
+
+data_list.each do |i|
+  puts "#{i[0]} #{i[1].strftime("%Y-%m-%d (%a)")}"
+  GARBAGES.each_with_index { |item, idx| puts "  #{idx}: #{item}" }
+  print "> "
+  index = gets.to_i
+  if index.class == Fixnum && index != 0 && GARBAGES[index] != nil
+    data << {i[0] => {i[1] => GARBAGES[index]}}
+  end
+  puts "registerd: #{i[0]} #{i[1].strftime("%Y-%m-%d (%a)")}: #{GARBAGES[index]}"
+  puts
+end
+
+dumped_data = data.inject { |m, i| merge_hash(m, i) }
+file_name = CAL_DIR + "#{year}_#{"%02d" % month}.yml"
+File.open(file_name, "w") { |f| YAML.dump(dumped_data, f) }
+
+pp dumped_data
+
+puts
+puts "done!"
+puts
+sleep 2
