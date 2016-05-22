@@ -39,7 +39,7 @@ module GomiBot
       end
 
       def district
-        @message.gsub(/\s\p{blank}/, "").to_sym
+        @message.gsub(/\p{blank}/, "").to_sym
       end
 
     end
