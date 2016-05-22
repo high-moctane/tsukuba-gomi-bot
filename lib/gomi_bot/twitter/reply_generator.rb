@@ -51,7 +51,7 @@ module GomiBot
       end
 
       def has_prefix?
-        prefix.map { |i| /\A#{i}[\s\p{blank}]+/ =~ @status[:text] } .include?(0)
+        prefix.map { |i| /\A#{i}[\p{blank}]+/ =~ @status[:text] } .include?(0)
       end
 
       def prefix_removed
