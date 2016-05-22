@@ -60,4 +60,3 @@ require_relative "clockwork"
 
 Thread.abort_on_exception = true
 GomiBot::Twitter::Stream.new.run
-sleep
