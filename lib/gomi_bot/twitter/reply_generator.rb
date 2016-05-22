@@ -70,7 +70,7 @@ module GomiBot
           @reply_limitter.add_replied_id(@status[:user][:id])
           @client.update(
             str,
-            in_reply_to_status_id: @status[:user][:id],
+            in_reply_to_status_id: @status[:id],
             screen_name: @status[:user][:screen_name]
           )
         end
