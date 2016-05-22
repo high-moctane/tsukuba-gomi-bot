@@ -55,7 +55,7 @@ module GomiBot
       end
 
       def prefix_removed
-        regexp = /(#{prefix.join("|")})[\s\p{blank}]+/
+        regexp = /(#{prefix.join("|")})[\p{blank}]+/
         @status[:text].gsub(regexp, "")
       end
 
