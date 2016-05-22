@@ -1,0 +1,21 @@
+---
+:account:
+  :default: :default
+  :debug:   :debug
+:logger:
+  :default:
+    :logfile: tsukuba_gomi_bot.log
+    :log_level: 1
+  :debug:
+    :logfile: debug_tsukuba_gomi_bot.log
+    :log_level: 0
+
+:following:
+  :following_limit: 40
+  :unfollowing_limit: 40
+
+:reply:
+  :reply_limit_sec: 60
+  :dm_limit_sec: 6
+  :reply_limit_count: 60
+  :dm_limit_count: 2
