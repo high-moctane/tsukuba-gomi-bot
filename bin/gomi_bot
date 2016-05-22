@@ -3,11 +3,3 @@ exec ruby -S -x "$0" "$@"
 #! ruby
 
 require_relative "../lib/gomi_bot"
-
-a = GomiBot::Twitter::Following.new
-pp a.to_follow_list
-pp a.to_unfollow_list
-pp a.call
-# obj = GomiBot::Twitter::Client.new
-# GomiBot::Twitter::Stream.new.run
-# sleep
