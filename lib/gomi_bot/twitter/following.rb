@@ -4,13 +4,18 @@ module GomiBot
   module Twitter
     class Following
 
-      def initialize
+      def initialize(
+        following: GomiBot.config[:following][:auto_following],
+        unfollowing: GomiBot.config[:following][:auto_unfollowing]
+      )
+        @following = following
+        @unfollowing = unfollowing
         @client   = GomiBot::Twitter::Client.new
       end
 
-      def call(following: true, unfollowing: true)
-        follow if following
-        unfollow if unfollowing
+      def call
+        follow if @following
+        unfollow if @unfollowing
         refresh_skip_following_list
       end
 
