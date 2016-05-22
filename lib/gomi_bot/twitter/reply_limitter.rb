@@ -22,11 +22,9 @@ module GomiBot
 
       def reply_limit?(id)
         init_replied_list(id)
-        pp @replied_list
         @replied_list[id].reject! { |i|
           Time.now - i > GomiBot.config[:reply][:reply_limit_sec]
         }
-        pp @replied_list
         if @replied_list[id].size >= GomiBot.config[:reply][:reply_limit_count]
           true
         else
