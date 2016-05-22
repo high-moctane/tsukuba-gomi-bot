@@ -37,11 +37,15 @@ module GomiBot
   end
 end
 
+require_relative "date"
 require_relative "gomi_bot/gomi"
 require_relative "gomi_bot/twitter/client"
 require_relative "gomi_bot/twitter/reply_generator"
 require_relative "gomi_bot/twitter/dm_generator"
 require_relative "gomi_bot/twitter/stream"
 require_relative "gomi_bot/twitter/following"
+require_relative "gomi_bot/twitter/reply_limitter"
 require_relative "gomi_bot/message/generator_template"
 require_relative "gomi_bot/message/gomikuji"
+require_relative "gomi_bot/message/gomi_today"
+require_relative "gomi_bot/message/gomi_week"
