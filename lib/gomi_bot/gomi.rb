@@ -74,6 +74,10 @@ module GomiBot
         .inject { |m, i| merge_hash(m, i) }
     end
 
+    def district
+      @calendar.keys
+    end
+
     # private
 
     # TODO: :収集なし がソースコードに書かれているので
@@ -81,17 +85,14 @@ module GomiBot
     def load_data
       @calendar ||= begin
         calendar_dir = Pathname.new(GomiBot.db_dir + "calendar")
-        data = calendar_dir.children.map { |i|
+        data = calendar_dir.children
+               .reject { |i| i.basename.to_s[0] == "." }.map { |i|
                  YAML.load_file(i.realpath.to_s)
                }
                .inject { |m, i| merge_hash(m, i) }
         data.each_key { |k| data[k].default = :収集なし }
         data
       end
-    end
-
-    def district
-      @calendar.keys
     end
 
     def merge_hash(hash1, hash2)
