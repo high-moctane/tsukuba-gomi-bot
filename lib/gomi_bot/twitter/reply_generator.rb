@@ -8,6 +8,7 @@ module GomiBot
         @client = client
         @status = status
         @generators = generators
+        @reply_limitter = GomiBot::Twitter::ReplyLimitter.instance
       end
 
       def call
@@ -18,35 +19,30 @@ module GomiBot
       end
 
       def reply
-        Parallel.each(@generators) do |generator|
-          generator_obj = generator.new(prefix_removed)
-          next if generator_obj.only_to_me? && has_prefix?.!
-          reply_message = generator_obj.call
-          if reply_message
-            @client.update(
-              reply_message,
-              in_reply_to_status_id: @status.id,
-              screen_name: @status.user.screen_name
-            )
-          end
+        messages =
+          Parallel.map(@generators, in_threads: @generators.size) { |generator|
+            generator_obj = generator.new(prefix_removed)
+            next if generator_obj.only_to_me? && has_prefix?.!
+            reply_message = generator_obj.call
+            update(reply_message) if reply_message
+            reply_message
+          }
+        if messages.none?(&:itself) && has_prefix?
+          update(default_message)
         end
       end
 
       def retweet?
-        status_attrs.key?(:retweeted_status)
+        @status.key?(:retweeted_status)
       end
 
       def reply_to_others?
-        @status_attrs[:in_reply_to_user_id].nil?.! &&
-          @status_attrs[:in_reply_to_screen_name] != @client.screen_name
+        @status[:in_reply_to_user_id].nil?.! &&
+          @status[:in_reply_to_screen_name] != @client.screen_name
       end
 
       def myself?
-        @status.user.id == @client.id
-      end
-
-      def status_attrs
-        @status_attrs ||= @status.attrs
+        @status[:user][:id] == @client.id
       end
 
       # TODO: 外部で指定することにしたい
@@ -55,12 +51,29 @@ module GomiBot
       end
 
       def has_prefix?
-        prefix.map { |i| /\A#{i}[\s\p{blank}]+/ =~ @status.text } .include?(0)
+        prefix.map { |i| /\A#{i}[\s\p{blank}]+/ =~ @status[:text] } .include?(0)
       end
 
       def prefix_removed
         regexp = /(#{prefix.join("|")})[\s\p{blank}]+/
-        @status.text.gsub(regexp, "")
+        @status[:text].gsub(regexp, "")
+      end
+
+      def default_message
+        GomiBot::Message::GomiToday.new.default
+      end
+
+      def update(str)
+        if @reply_limitter.reply_limit?(@status[:user][:id])
+          false
+        else
+          @reply_limitter.add_replied_id(@status[:user][:id])
+          @client.update(
+            str,
+            in_reply_to_status_id: @status[:user][:id],
+            screen_name: @status[:user][:screen_name]
+          )
+        end
       end
 
     end

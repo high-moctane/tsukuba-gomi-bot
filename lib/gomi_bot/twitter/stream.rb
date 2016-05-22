@@ -33,14 +33,14 @@ module GomiBot
       def generate_reply
         loop do
           tweet = @tweets.pop
-          reply_generator.new(tweet_generator_list, @client, tweet).call
+          reply_generator.new(tweet_generator_list, @client, tweet.attrs).call
         end
       end
 
       def generate_dm
         loop do
           dm = @dms.pop
-          dm_generator.new(dm_generator_list, @client, dm).call
+          dm_generator.new(dm_generator_list, @client, dm.attrs).call
         end
       end
 

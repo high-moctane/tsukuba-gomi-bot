@@ -8,6 +8,7 @@ module GomiBot
         @client = client
         @status = status
         @generators = generators
+        @reply_limitter = GomiBot::Twitter::ReplyLimitter.instance
       end
 
       def call
@@ -18,24 +19,31 @@ module GomiBot
       end
 
       def reply
-        Parallel.each(@generators) do |generator|
-          generator_obj = generator.new(@status.text)
-          reply_message = generator_obj.call
-          if reply_message
-            @client.dm(
-              status_attrs[:sender][:screen_name],
-              reply_message
-            )
-          end
-        end
-      end
-
-      def status_attrs
-        @status_attrs ||= @status.attrs
+        messages =
+          Parallel.map(@generators, in_threads: @generators.size) { |generator|
+            generator_obj = generator.new(@status[:text])
+            reply_message = generator_obj.call
+            dm(reply_message) if reply_message
+            reply_message
+          }
+        dm(default_message) if messages.none?(&:itself)
       end
 
       def myself?
-        status_attrs[:sender][:id] == @client.id
+        @status[:sender][:id] == @client.id
+      end
+
+      def dm(str)
+        if @reply_limitter.dm_limit?(@status[:sender_id])
+          false
+        else
+          @reply_limitter.add_dmd_id(@status[:sender_id])
+          @client.dm(@status[:sender][:screen_name], str)
+        end
+      end
+
+      def default_message
+        GomiBot::Message::GomiToday.new.default
       end
     end
   end
