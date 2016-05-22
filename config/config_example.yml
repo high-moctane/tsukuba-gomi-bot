@@ -11,6 +11,8 @@
     :log_level: 0
 
 :following:
+  :auto_following: true
+  :auto_unfollowing: true
   :following_limit: 40
   :unfollowing_limit: 40
 
