@@ -1,5 +1,4 @@
 require "clockwork"
-require_relative "gomi_bot"
 
 module Clockwork
   configure { |config|

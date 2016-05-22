@@ -4,8 +4,8 @@ exec rbenv exec bundle exec ruby -S -x "$0" "$@"
 
 require "open3"
 
-clockwork_path = File.expand_path("../../lib/clockwork.rb", __FILE__)
-out, err, status = Open3.capture3("rbenv exec bundle exec clockwork #{clockwork_path}")
+gomi_bot_path = File.expand_path("../../lib/gomi_bot.rb", __FILE__)
+out, err, status = Open3.capture3("rbenv exec bundle exec clockwork #{gomi_bot_path}")
 
 puts out
 warn err + "\n"
