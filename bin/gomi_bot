@@ -1,5 +1,12 @@
 #! /bin/sh
-exec ruby -S -x "$0" "$@"
+exec rbenv exec bundle exec ruby -S -x "$0" "$@"
 #! ruby
 
-require_relative "../lib/gomi_bot"
+require "open3"
+
+clockwork_path = File.expand_path("../../lib/clockwork.rb", __FILE__)
+out, err, status = Open3.capture3("rbenv exec bundle exec clockwork #{clockwork_path}")
+
+puts out
+warn err + "\n"
+p status

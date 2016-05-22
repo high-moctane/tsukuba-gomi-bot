@@ -1,6 +1,7 @@
 require "logger"
 require "pathname"
 require "pp"
+require "thread"
 require "yaml"
 
 module GomiBot
@@ -26,7 +27,7 @@ module GomiBot
         Dir.mkdir(root_dir + "log") unless Dir.exist?(root_dir + "log")
         is_debug = $DEBUG ? :debug : :default
         logger = Logger.new(root_dir + "log/" + config[:logger][is_debug][:logfile])
-        logger.level = config[:logger][is_debug][:logfile].to_i
+        logger.level = config[:logger][is_debug][:log_level].to_i
         logger
       end
     end
@@ -50,3 +51,13 @@ require_relative "gomi_bot/message/generator_template"
 require_relative "gomi_bot/message/gomikuji"
 require_relative "gomi_bot/message/gomi_today"
 require_relative "gomi_bot/message/gomi_week"
+require_relative "clockwork"
+
+
+# --------------------------------------------------------------------------------
+# main
+#
+
+Thread.abort_on_exception = true
+GomiBot::Twitter::Stream.new.run
+sleep
