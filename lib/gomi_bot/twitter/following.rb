@@ -28,7 +28,7 @@ module GomiBot
         end
         unless new_skip_following.empty?
           new_config = config
-          new_config[:skip_following] = new_skip_following
+          new_config[:skip_following] += new_skip_following
           dump_config(new_config)
         end
       end
