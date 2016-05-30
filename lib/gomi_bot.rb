@@ -51,6 +51,7 @@ require_relative "gomi_bot/message/generator_template"
 require_relative "gomi_bot/message/gomikuji"
 require_relative "gomi_bot/message/gomi_today"
 require_relative "gomi_bot/message/gomi_week"
+require_relative "gomi_bot/message/gomi_search"
 require_relative "clockwork"
 
 
@@ -58,5 +59,14 @@ require_relative "clockwork"
 # main
 #
 
-Thread.abort_on_exception = true
-GomiBot::Twitter::Stream.new.run
+begin
+  GomiBot.logger.info "ごみbot 起動 (｀･ω･´)！"
+  Thread.abort_on_exception = true
+  GomiBot::Twitter::Stream.new.run
+  sleep if $DEBUG
+
+rescue StandardError => e
+  GomiBot.logger.fatal "エラー(´; ω ;｀) #{GomiBot.logger_message(e)}"
+  raise
+
+end
