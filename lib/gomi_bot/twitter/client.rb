@@ -139,7 +139,17 @@ module GomiBot
       end
 
       def gen_footer
-        YAML.load_file(GomiBot.db_dir + "footer_emoji.yml").sample
+        footer_fiber.resume
+      end
+
+      def footer_fiber
+        footer_list ||= YAML.load_file(GomiBot.db_dir + "footer_emoji.yml")
+        next_time ||= footer_list
+        fib ||= Fiber.new do
+          this_time = next_time.sample
+          next_time = footer_list.reject { |v| v == this_time }
+          Fiber.yield this_time
+        end
       end
 
       def gen_message(message, screen_name:)
