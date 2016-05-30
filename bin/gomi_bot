@@ -5,8 +5,15 @@ exec rbenv exec bundle exec ruby -S -x "$0" "$@"
 require "open3"
 
 gomi_bot_path = File.expand_path("../../lib/gomi_bot.rb", __FILE__)
-out, err, status = Open3.capture3("rbenv exec bundle exec clockwork #{gomi_bot_path}")
 
-puts out
-warn err + "\n"
-p status
+begin
+  out, err, status = Open3.capture3("rbenv exec bundle exec clockwork #{gomi_bot_path}")
+
+rescue StandardError, Interrupt
+  puts "STDOUT:\n#{out}\n" if out
+  puts "STDERR:\n#{err}\n" if err
+  puts "STATUS:\n#{status}\n" if status
+  puts "See you (｀･ω･´)！"
+  exit
+end
+
