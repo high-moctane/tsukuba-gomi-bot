@@ -6,7 +6,7 @@ module GomiBot
     class GomiWeek < GomiBot::Message::GeneratorTemplate
 
       def condition
-        GomiBot::Gomi.instance.district.include?(district)
+        parse_district
       end
 
       def gen_message
@@ -39,7 +39,17 @@ module GomiBot
       end
 
       def district
-        @message.gsub(/\p{blank}/, "").to_sym
+        parse_district
+      end
+
+      def parse_district
+        case @message
+        when /東|ひがし|ヒガシ/ then :東地区
+        when /西|にし|にし/     then :西地区
+        when /南|みなみ|ミナミ/ then :南地区
+        when /北|きた|キタ/     then :北地区
+        else false
+        end
       end
 
     end
