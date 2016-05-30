@@ -4,6 +4,7 @@ module GomiBot
   class Statistics
 
     def call
+      GomiBot.logger.info "Statistics 開始"
       logger.fatal YAML.dump(data)
     end
 

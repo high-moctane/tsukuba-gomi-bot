@@ -7,6 +7,7 @@ module GomiBot
       end
 
       def call
+        GomiBot.logger.info "自動ツイート開始 | #{message}"
         @client.update(message)
       end
 

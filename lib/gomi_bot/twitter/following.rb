@@ -14,6 +14,7 @@ module GomiBot
       end
 
       def call
+        GomiBot.logger.info "Following 開始"
         follow if @following
         unfollow if @unfollowing
         refresh_skip_following_list

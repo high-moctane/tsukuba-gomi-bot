@@ -9,6 +9,7 @@ module Clockwork
 
   handler { |job|
     sleep [*0..600].sample
+    GomiBot.logger.info "Clockwork 開始 | #{job}"
     job.call
   }
 
