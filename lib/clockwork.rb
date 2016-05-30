@@ -12,6 +12,12 @@ module Clockwork
     job.call
   }
 
-  every(1.5.hours, ::GomiBot::Twitter::AutoTweets.new)
-  every(2.hours, ::GomiBot::Twitter::Following.new)
+  every(
+    GomiBot.config[:auto][:auto_tweets_interval].minutes,
+    ::GomiBot::Twitter::AutoTweets.new
+  )
+  every(
+    GomiBot.config[:auto][:auto_following_interval].minutes,
+    ::GomiBot::Twitter::Following.new
+  )
 end

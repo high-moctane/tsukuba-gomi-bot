@@ -21,3 +21,7 @@
   :dm_limit_sec: 6
   :reply_limit_count: 60
   :dm_limit_count: 2
+
+:auto:
+    :auto_tweets_interval: 120
+    :auto_following_interval: 120
