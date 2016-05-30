@@ -20,4 +20,9 @@ module Clockwork
     GomiBot.config[:auto][:auto_following_interval].minutes,
     ::GomiBot::Twitter::Following.new
   )
+  every(
+    1.day,
+    GomiBot::Statistics.new,
+    at: "00:00"
+  )
 end

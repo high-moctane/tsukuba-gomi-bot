@@ -52,6 +52,7 @@ require_relative "gomi_bot/message/gomikuji"
 require_relative "gomi_bot/message/gomi_today"
 require_relative "gomi_bot/message/gomi_week"
 require_relative "gomi_bot/message/gomi_search"
+require_relative "gomi_bot/statistics"
 require_relative "clockwork"
 
 
