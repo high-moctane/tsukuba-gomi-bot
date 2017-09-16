@@ -8,6 +8,32 @@ func TestGarbageString(t *testing.T) {
 	}
 }
 
+func TestNoCollecting(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected bool
+	}{
+		{"収集なし", true},
+		{"燃やせない", false},
+		{"かん", false},
+		{"粗大ごみ", false},
+		{"ペットボトル", false},
+		{"びん", false},
+		{"スプレー缶", false},
+		{"紙", false},
+		{"布", false},
+		{"燃やせる", false},
+		{"", false},
+		{"ぜんぜん違う文字列", false},
+	}
+
+	for _, test := range tests {
+		if ans := IsNoCollecting(test.input); ans != test.expected {
+			t.Errorf("IsNoCollecting(%q) = %v", test.input, ans)
+		}
+	}
+}
+
 func TestIsBurnableGarbage(t *testing.T) {
 	tests := []struct {
 		input    string
@@ -194,5 +220,38 @@ func TestNonBurnableGarbage(t *testing.T) {
 		if ans := IsNonBurnableGarbage(test.input); ans != test.expected {
 			t.Errorf("IsNonBurnableGarbage(%q) = %v", test.input, ans)
 		}
+	}
+}
+
+func TestParseGarbage(t *testing.T) {
+	tests := []struct {
+		input    string
+		expected Garbage
+	}{
+		{"収集なし", NoCollecting},
+		{"燃やせるごみ", BurnableGarbage},
+		{"紙", UsedPaperAndClothes},
+		{"びん", GlassBottlesAndSplayCans},
+		{"ペットボトル", PlasticBottles},
+		{"粗大ごみ", OversizedGarbage},
+		{"かん", Cans},
+		{"燃やせないごみ", NonBurnableGarbage},
+	}
+
+	for _, test := range tests {
+		g, err := ParseGarbage(test.input)
+		if err != nil {
+			t.Errorf("%q is a sanity string", test.input)
+		}
+		if g != test.expected {
+			t.Errorf("%q is not %s",
+				test.input, Garbage(test.expected).String())
+		}
+	}
+
+	// error check
+	_, err := ParseGarbage("")
+	if err == nil {
+		t.Errorf("\"\" causes no error")
 	}
 }

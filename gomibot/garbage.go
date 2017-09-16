@@ -33,6 +33,7 @@ const (
 )
 
 // regexps which is used for judging input strings
+var regexpNoCollecting = regexp.MustCompile(`収集なし`)
 var regexpBurnableGarbage = regexp.MustCompile(`(燃|も|萌)(える|や(す|せる))`)
 var regexpUsedPaperAndClothes = regexp.MustCompile(`紙|こし|かみ|布|ぬの|こふ`)
 var regexpGlassBottlesAndSplayCans = regexp.MustCompile(`びん|ビン|瓶|スプレー|すぷれー`)
@@ -40,6 +41,11 @@ var regexpPlasticBottles = regexp.MustCompile(`ペット|ぺっと`)
 var regexpOversizedGarbage = regexp.MustCompile(`粗大|そだい`)
 var regexpCans = regexp.MustCompile(`缶|かん|カン`)
 var regexpNonBurnableGarbage = regexp.MustCompile(`(燃|も|萌)(えない|や(さ|せ)ない)`)
+
+// IsNoCollecting returns if s means NoCollecting
+func IsNoCollecting(s string) bool {
+	return regexpNoCollecting.MatchString(s)
+}
 
 // IsBurnableGarbage returns if s means BurnableGarbage
 func IsBurnableGarbage(s string) bool {
@@ -75,6 +81,38 @@ func IsCans(s string) bool {
 // IsNonBurnableGarbage returns if s means NonBurnableGarbage
 func IsNonBurnableGarbage(s string) bool {
 	return regexpNonBurnableGarbage.MatchString(s)
+}
+
+// ParseGarbage parses s into Garbage
+func ParseGarbage(s string) (Garbage, error) {
+	switch {
+	case IsNoCollecting(s):
+		return NoCollecting, nil
+	case IsBurnableGarbage(s):
+		return BurnableGarbage, nil
+	case IsUsedPaperAndClothes(s):
+		return UsedPaperAndClothes, nil
+	case IsGlassBottlesAndSplayCans(s):
+		return GlassBottlesAndSplayCans, nil
+	case IsPlasticBottles(s):
+		return PlasticBottles, nil
+	case IsOversizedGarbage(s):
+		return OversizedGarbage, nil
+	case IsCans(s):
+		return Cans, nil
+	case IsNonBurnableGarbage(s):
+		return NonBurnableGarbage, nil
+	}
+	return 0, ParseGarbageError{s}
+}
+
+// ParseGarbageError describes a probrem parsing garbage string.
+type ParseGarbageError struct {
+	s string
+}
+
+func (e ParseGarbageError) Error() string {
+	return e.s + ": parse error"
 }
 
 func (g Garbage) String() string {
