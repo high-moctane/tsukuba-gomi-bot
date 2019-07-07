@@ -22,8 +22,7 @@ func Run() error {
 	}
 
 	// カレンダーの作成
-	// TODO: ここのハードコードそのうちどうにかする
-	cal, err := NewCalendar("../calendar")
+	cal, err := NewCalendar(CalDir())
 	if err != nil {
 		return err
 	}
@@ -36,4 +35,9 @@ func Run() error {
 
 	RegularTweetServer(client, cal)
 	return nil
+}
+
+// TODO: この雑な実装をそのうちどうにかする
+func CalDir() string {
+	return os.Args[1]
 }
