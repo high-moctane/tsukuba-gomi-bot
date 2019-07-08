@@ -23,10 +23,10 @@ func RegularTweet(client *twitter.Client, c Calendar) error {
 // TODO: そのうち時間指定できたりとかにする
 func RegularTweetServer(client *twitter.Client, c Calendar) {
 	for {
-		time.Sleep(time.Hour)
+		time.Sleep(1.5 * time.Hour)
 		if err := RegularTweet(client, c); err != nil {
 			log.Println("regular tweet error:", err)
 		}
-		time.Sleep(time.Hour)
+		time.Sleep(1.5 * time.Hour)
 	}
 }
