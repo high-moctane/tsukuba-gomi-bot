@@ -17,7 +17,7 @@ func dateFormat(date time.Time) string {
 }
 
 func timeFormat(t time.Time) string {
-	return t.Format("03:04")
+	return t.Format("15:04")
 }
 
 func TodayMessage(c Calendar) string {
