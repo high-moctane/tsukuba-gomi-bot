@@ -49,7 +49,7 @@ func runGomibot() error {
 
 // TODO: この雑な実装をそのうちどうにかする
 func CalDir() string {
-	return "/calendar"
+	return "./calendar"
 }
 
 func runHTTPServer() error {
