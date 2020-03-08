@@ -1,7 +1,9 @@
 package main
 
 import (
+	"fmt"
 	"log"
+	"net/http"
 	"os"
 
 	"github.com/dghubble/go-twitter/twitter"
@@ -21,6 +23,20 @@ func Run() error {
 		return err
 	}
 
+	errCh := make(chan error)
+
+	go func() {
+		errCh <- runGomibot()
+	}()
+
+	go func() {
+		errCh <- runHTTPServer()
+	}()
+
+	return <-errCh
+}
+
+func runGomibot() error {
 	// カレンダーの作成
 	cal, err := NewCalendar(CalDir())
 	if err != nil {
@@ -39,5 +55,15 @@ func Run() error {
 
 // TODO: この雑な実装をそのうちどうにかする
 func CalDir() string {
-	return os.Args[1]
+	return "../calendar"
+}
+
+func runHTTPServer() error {
+	port := os.Getenv("PORT")
+	http.HandleFunc("/", HTTPhandler)
+	return http.ListenAndServe(":"+port, nil)
+}
+
+func HTTPhandler(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintln(w, "(｀･ω･´)")
 }
