@@ -8,7 +8,6 @@ import (
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
-	"github.com/joho/godotenv"
 )
 
 func main() {
@@ -18,11 +17,6 @@ func main() {
 }
 
 func Run() error {
-	// .env の読み込み
-	if err := godotenv.Load(); err != nil {
-		return err
-	}
-
 	errCh := make(chan error)
 
 	go func() {
