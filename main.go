@@ -5,10 +5,24 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"time"
 
 	"github.com/dghubble/go-twitter/twitter"
 	"github.com/dghubble/oauth1"
 )
+
+func init() {
+	setLocationJST()
+}
+
+func setLocationJST() {
+	locName := "Asia/Tokyo"
+	loc, err := time.LoadLocation(locName)
+	if err != nil {
+		loc = time.FixedZone(locName, 9*60*60)
+	}
+	time.Local = loc
+}
 
 func main() {
 	if err := Run(); err != nil {
