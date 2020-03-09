@@ -9,10 +9,17 @@ import (
 
 func RegularTweet(client *twitter.Client, c Calendar) error {
 	var mes string
+	var err error
 	if time.Now().Hour() < 12 {
-		mes = TodayMessage(c)
+		mes, err = TodayMessage(c)
+		if err != nil {
+			return err
+		}
 	} else {
-		mes = TomorrowMessage(c)
+		mes, err = TomorrowMessage(c)
+		if err != nil {
+			return err
+		}
 	}
 	if _, _, err := client.Statuses.Update(mes, nil); err != nil {
 		return err

@@ -20,18 +20,34 @@ func timeFormat(t time.Time) string {
 	return t.Format("15:04")
 }
 
-func TodayMessage(c Calendar) string {
-	today := time.Now()
+func loadJST() (jst *time.Location, err error) {
+	jst, err = time.LoadLocation("Asia/Tokyo")
+	if err != nil {
+		return
+	}
+	return
+}
+
+func TodayMessage(c Calendar) (string, error) {
+	jst, err := loadJST()
+	if err != nil {
+		return "", err
+	}
+	today := time.Now().In(jst)
 	ans := "今日" + dateFormat(today) + "のごみは\n"
 	ans += c.Date(today) + "\n"
 	ans += "です(｀･ω･´) " + timeFormat(time.Now())
-	return ans
+	return ans, nil
 }
 
-func TomorrowMessage(c Calendar) string {
-	tomorrow := time.Now().Add(24 * time.Hour)
+func TomorrowMessage(c Calendar) (string, error) {
+	jst, err := loadJST()
+	if err != nil {
+		return "", err
+	}
+	tomorrow := time.Now().In(jst).Add(24 * time.Hour)
 	ans := "明日" + dateFormat(tomorrow) + "のごみは\n"
 	ans += c.Date(tomorrow) + "\n"
 	ans += "です(｀･ω･´) " + timeFormat(time.Now())
-	return ans
+	return ans, err
 }
