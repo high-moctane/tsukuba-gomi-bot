@@ -1,0 +1,777 @@
+[
+  {
+    "date": "2020-10-01",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-02",
+    "district": "北地区",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-03",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-04",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-05",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-06",
+    "district": "北地区",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-07",
+    "district": "北地区",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-08",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-09",
+    "district": "北地区",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-10",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-11",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-12",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-13",
+    "district": "北地区",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-14",
+    "district": "北地区",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-15",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-16",
+    "district": "北地区",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-17",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-18",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-19",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-20",
+    "district": "北地区",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-21",
+    "district": "北地区",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-22",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-23",
+    "district": "北地区",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-24",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-25",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-26",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-27",
+    "district": "北地区",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-28",
+    "district": "北地区",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-29",
+    "district": "北地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-30",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-31",
+    "district": "北地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-01",
+    "district": "西地区A",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-02",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-03",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-04",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-05",
+    "district": "西地区A",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-06",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-07",
+    "district": "西地区A",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-08",
+    "district": "西地区A",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-09",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-10",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-11",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-12",
+    "district": "西地区A",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-13",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-14",
+    "district": "西地区A",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-15",
+    "district": "西地区A",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-16",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-17",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-18",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-19",
+    "district": "西地区A",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-20",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-21",
+    "district": "西地区A",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-22",
+    "district": "西地区A",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-23",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-24",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-25",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-26",
+    "district": "西地区A",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-27",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-28",
+    "district": "西地区A",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-29",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-30",
+    "district": "西地区A",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-31",
+    "district": "西地区A",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-01",
+    "district": "西地区B",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-02",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-03",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-04",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-05",
+    "district": "西地区B",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-06",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-07",
+    "district": "西地区B",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-08",
+    "district": "西地区B",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-09",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-10",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-11",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-12",
+    "district": "西地区B",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-13",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-14",
+    "district": "西地区B",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-15",
+    "district": "西地区B",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-16",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-17",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-18",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-19",
+    "district": "西地区B",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-20",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-21",
+    "district": "西地区B",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-22",
+    "district": "西地区B",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-23",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-24",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-25",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-26",
+    "district": "西地区B",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-27",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-28",
+    "district": "西地区B",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-29",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-30",
+    "district": "西地区B",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-31",
+    "district": "西地区B",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-01",
+    "district": "東地区",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-02",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-03",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-04",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-05",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-06",
+    "district": "東地区",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-07",
+    "district": "東地区",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-08",
+    "district": "東地区",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-09",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-10",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-11",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-12",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-13",
+    "district": "東地区",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-14",
+    "district": "東地区",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-15",
+    "district": "東地区",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-16",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-17",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-18",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-19",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-20",
+    "district": "東地区",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-21",
+    "district": "東地区",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-22",
+    "district": "東地区",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-23",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-24",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-25",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-26",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-27",
+    "district": "東地区",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-28",
+    "district": "東地区",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-29",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-30",
+    "district": "東地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-31",
+    "district": "東地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-01",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-02",
+    "district": "南地区",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-03",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-04",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-05",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-06",
+    "district": "南地区",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-07",
+    "district": "南地区",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-08",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-09",
+    "district": "南地区",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-10",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-11",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-12",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-13",
+    "district": "南地区",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-14",
+    "district": "南地区",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-15",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-16",
+    "district": "南地区",
+    "garbage": "かん"
+  },
+  {
+    "date": "2020-10-17",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-18",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-19",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-20",
+    "district": "南地区",
+    "garbage": "ペットボトル"
+  },
+  {
+    "date": "2020-10-21",
+    "district": "南地区",
+    "garbage": "古紙・古布"
+  },
+  {
+    "date": "2020-10-22",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-23",
+    "district": "南地区",
+    "garbage": "プラ製容器包装，粗大ごみ（予約制）"
+  },
+  {
+    "date": "2020-10-24",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-25",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-26",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-27",
+    "district": "南地区",
+    "garbage": "燃やせないごみ"
+  },
+  {
+    "date": "2020-10-28",
+    "district": "南地区",
+    "garbage": "びん，スプレー容器"
+  },
+  {
+    "date": "2020-10-29",
+    "district": "南地区",
+    "garbage": "燃やせるごみ"
+  },
+  {
+    "date": "2020-10-30",
+    "district": "南地区",
+    "garbage": "収集なし"
+  },
+  {
+    "date": "2020-10-31",
+    "district": "南地区",
+    "garbage": "収集なし"
+  }
+]

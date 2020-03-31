@@ -5,7 +5,7 @@ import (
 	"time"
 )
 
-var Districts = []string{"北地区", "西地区", "東地区", "南地区"}
+var Districts = []string{"北地区", "西地区A", "西地区B", "東地区", "南地区"}
 
 var Garbages = []string{
 	"収集なし",
