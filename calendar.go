@@ -3,6 +3,7 @@ package main
 import (
 	"encoding/json"
 	"io"
+	"io/ioutil"
 	"os"
 	"path/filepath"
 	"sort"
@@ -29,14 +30,19 @@ func (ent *Entries) ToCalendar() Calendar {
 	return cal
 }
 
-// 向こう1or2月分のカレンダーを読み込む
+// カレンダー全部を読み込む
 func ReadEntries(sourceDir string) (Entries, error) {
+	files, err := ioutil.ReadDir(sourceDir)
+	if err != nil {
+		return nil, err
+	}
+
 	ans := Entries{}
 
-	for _, fname := range calFilename() {
+	for _, f := range files {
 		ent := Entries{}
 
-		pth := filepath.Join(sourceDir, fname)
+		pth := filepath.Join(sourceDir, f.Name())
 		f, err := os.Open(pth)
 		if err != nil {
 			return nil, err
@@ -52,20 +58,6 @@ func ReadEntries(sourceDir string) (Entries, error) {
 		ans = append(ans, ent...)
 	}
 	return ans, nil
-}
-
-func calFilename() []string {
-	// Heroku で1日1回再起動されることを前提としているので，
-	// 2日後の日付のデータも読み込むことにする
-	date := time.Now()
-	datestr := date.Format("2006-01")
-	datestr2 := date.Add(48 * time.Hour).Format("2006-01")
-
-	res := []string{datestr + ".json"}
-	if datestr != datestr2 {
-		res = append(res, datestr2+".json")
-	}
-	return res
 }
 
 // map["2019-07-01"]map["東地区"]ごみ名
